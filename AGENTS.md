@@ -1,0 +1,37 @@
+# AGENTS.md
+
+## Context
+Target: **PICO-8 (Lua)**  
+Goals: small code, low token usage, fast iteration, simple patterns.
+
+## Core rules
+- Prefer **simple tables + functions** over OOP or abstractions.
+- Avoid metatables, inheritance, or frameworks unless explicitly needed.
+- Keep identifiers short but readable.
+- Minimize token-heavy patterns; favor simpler equivalents.
+- Preserve behavior; make minimal changes.
+
+## Token strategy
+- Be mindful of the **8192 token limit**.
+- Prefer concise patterns over generic/expandable ones.
+- Organize project using multiple files, where pixiepixie.p8 is the entrance point (and uses include).
+
+## PICO-8 specifics
+- Sprite ids (0–255) index the sprite sheet (16x16 tiles of 8x8).
+- Use `pal()` for recoloring and `palt()` for transparency.
+- Reset palette with `pal()` after drawing unless intentional.
+
+## Code style
+- Keep globals at top of files, alphabetized. Keep functions within a file alphabetized.
+- Keep update/draw loops straightforward.
+- Favor small helpers over deep indirection.
+- Do not add comments to code files; keep documentation in `DOCS.md` instead.
+- Always update `DOCS.md` when variables, controls, systems, or file responsibilities change.
+- Always update `CHANGELOG.md` when gameplay, UI, balance, or flow changes.
+- Keep the title-screen version string in sync with `CHANGELOG.md`.
+
+## DOCS
+- New or changes to existing file globals, functions, or otherwise code should be documented in `DOCS.md`,
+  in lieu of code comments. Keep descriptions/comments concise and accurate, describing input variables,
+  equations, and output variables in human understandable terms.
+
