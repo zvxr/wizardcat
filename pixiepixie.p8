@@ -2,8 +2,11 @@ pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
 
+#include cursor.lua
 #include game.lua
 #include grid.lua
+#include panel.lua
+#include queue.lua
 
 c=nil
 cr=0
@@ -16,19 +19,22 @@ ver = "2026.alpha1"
 function _draw()
   cls()
   map()
-  draw_grid(get_lc())
-  draw_cursor()
+  draw_g(get_lc())
+  draw_c()
 end
 
 function _init()
   cartdata("pixiepixie")
   init_game()
-  init_grid(get_lc())
+
+  init_c()
+  init_g(get_lc())
+  init_q()
 end
 
 function _update()
   upd_input()
-  upd_grid()
+  upd_g()
 end
 
 __gfx__

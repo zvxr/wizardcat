@@ -1,7 +1,3 @@
-function draw_cursor()
- spr(2,(c.x+5)*8,c.y*8)
-end
-
 function get_lc()
   return lv%4+1
 end
@@ -10,15 +6,6 @@ function init_game()
   lv=1    -- level
   cr=0    -- cracks
   sc=0    -- score
-  c={     -- cursor
-    x=5,  -- x coord
-    y=5   -- y coord
-  }
-  q={     -- queue
-    f=1,  -- first
-    l=0,  -- last
-    s=3,  -- size
-  }
 end
 
 function upd_input()
