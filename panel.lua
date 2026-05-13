@@ -16,7 +16,7 @@ function draw_p(lc,p,x,y)
 
  if pg==3 then
   pg+=ga
- elseif pg>=64 and pg<=76 then
+ elseif pg>=64 then
   pg+=ga*16
  end
 
@@ -24,4 +24,21 @@ function draw_p(lc,p,x,y)
  pal(6,p.c)
  spr(pg,x*8,y*8)
  pal()
+end
+
+function get_lfp()
+ if lv<10 or rnd(2)<1 then
+  return {a=40,c=0,g=142}
+ end
+ return {a=40,c=7,g=143}
+end
+
+function get_lp()
+ local cn=min(8,4+flr(lv/3))
+ local gn=min(16,3+lv-flr(lv/3))
+ return {
+  a=40,
+  c=8+flr(rnd(cn)),
+  g=64+flr(rnd(gn))
+ }
 end

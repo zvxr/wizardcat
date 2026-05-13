@@ -37,5 +37,7 @@ function upd_input()
   else
    sfx(1)
   end
+ elseif btnp(5) then
+  put_p()
  end
 end
