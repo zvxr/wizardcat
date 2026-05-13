@@ -25,8 +25,8 @@ iteration, simple patterns, clean implementation.
 - Keep globals at top of files, alphabetized. Keep functions within a file
   alphabetized.
 - Prefer function names in `{verb}_{actor}` form. When the actor is a common
-  global like `g`, `q`, or `c`, prefer the one-letter actor form such as
-  `init_g`, `upd_g`, `draw_c`, `add_q`, and `pop_q`.
+  global like `m`, `q`, or `t`, prefer the one-letter actor form such as
+  `init_m`, `upd_m`, `draw_t`, `add_q`, and `pop_q`.
 - Keep update/draw loops straightforward.
 - Favor small reusable helpers over deep indirection.
 - Do not add comments to code files; keep documentation in `DOCS.md` instead.

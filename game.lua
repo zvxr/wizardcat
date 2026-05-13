@@ -10,29 +10,29 @@ end
 
 function upd_input()
  if btnp(0) then
-  if c.x>1 then
-   c.x-=1
+  if t.x>1 then
+   t.x-=1
    sfx(3)
   else
    sfx(1)
   end
  elseif btnp(1) then
-  if c.x<9 then
-   c.x+=1
+  if t.x<9 then
+   t.x+=1
    sfx(3)
   else
    sfx(1)
   end
  elseif btnp(2) then
-  if c.y>1 then
-   c.y-=1
+  if t.y>1 then
+   t.y-=1
    sfx(3)
   else
    sfx(1)
   end
  elseif btnp(3) then
-  if c.y<9 then
-   c.y+=1
+  if t.y<9 then
+   t.y+=1
    sfx(3)
   else
    sfx(1)
