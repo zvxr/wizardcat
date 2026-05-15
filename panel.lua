@@ -47,6 +47,9 @@ function get_lfp()
 end
 
 function get_lp()
+ if rnd(100)<lk then
+  return get_lfp()
+ end
  local cn=min(8,4+flr(lv/3))
  local gn=min(16,3+lv-flr(lv/3))
  return {

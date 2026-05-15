@@ -3,8 +3,17 @@ function get_lc()
 end
 
 function init_game()
+  lk=1+flr(rnd(3))
   lv=1    -- level
   sc=0    -- score
+end
+
+function next_lv()
+ lv+=1
+ sfx(8)
+ init_t()
+ init_m()
+ init_q()
 end
 
 function upd_input()

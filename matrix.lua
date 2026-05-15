@@ -32,6 +32,15 @@ function check_m(p,x,y)
  return true
 end
 
+function check_mlv()
+ for y=1,9 do
+  for x=1,9 do
+   if m[y][x].g==1 then return end
+  end
+ end
+ return true
+end
+
 function check_mc(p,x,y)
  local n=m[y][x]
  if empty_m(n) or n.g==p.g then return true end
@@ -42,7 +51,8 @@ function check_mc(p,x,y)
  if n.c==7 and p.c>=12 and p.c<=15 then return true end
 end
 
-function init_m(lc)
+function init_m()
+  local lc=get_lc()
   m={}            -- matrix
   for y=1,9 do
     m[y]={}
@@ -94,11 +104,15 @@ function put_p()
  if q.d>0 then
   q.d-=1
  end
- fill_q()
  if fy or fx then
   sfx(7)
  end
  sfx(4)
+ if check_mlv() then
+  next_lv()
+  return
+ end
+ fill_q()
 end
 
 function upd_m()

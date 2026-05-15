@@ -8,6 +8,9 @@ Target table. Holds `x` and `y` tile coordinates.
 ### m
 9x9 matrix of panel tables. Each panel uses `a` for animation ticks, `c` for panel color, and `g` for core graphic id.
 
+### lk
+Luck integer. Set randomly to `1`, `2`, or `3` during game init. Used as the percent chance for `get_lp()` to return a special first panel instead of a normal level panel.
+
 ### lv
 Current level integer. `get_lc()` maps this to a level color with `lv%4+1`.
 
@@ -34,6 +37,9 @@ Draws one panel at tile coordinate `(x,y)`. Blank graphic `1` uses `p.a` to anim
 ### check_m(p,x,y)
 Checks whether panel `p` can be placed at matrix coordinate `(x,y)` based on the four cardinal neighbors. Only in-bounds neighbors are checked. Returns true only if every checked neighbor passes `check_mc()`. Panels whose color is not `0` or `7` must also touch at least one non-empty neighbor.
 
+### check_mlv()
+Checks whether the matrix is ready to advance the level. Returns true only when every matrix panel has been touched at least once, meaning no panel still has graphic `1`.
+
 ### check_mc(p,x,y)
 Checks whether panel `p` is compatible with the existing matrix panel at `(x,y)`. Empty panels and cleared panels always pass. Non-empty panels pass if the graphic matches, the color matches exactly, color `0` matches colors `8..11`, or color `7` matches colors `12..15`.
 
@@ -53,16 +59,19 @@ Returns the current level color from `lv`, looping through colors `1` to `4`.
 Returns a special first panel table with animation `40`. For levels `1` through `9`, always returns color `0`, graphic `142`. From level `10` onward, returns either `(0,142)` or `(7,143)` with a 50/50 chance.
 
 ### get_lp()
-Returns a new level panel table. Sets animation to `40`, chooses panel color from a level-scaled range starting at `8..11` and adding one color every third level until `8..15`, and chooses graphic from a level-scaled range starting at `64..67` and growing on the non-color levels until `64..79`.
+Returns a new level panel table. Uses `lk` as a `1` to `3` percent chance to return `get_lfp()` instead. Otherwise sets animation to `40`, chooses panel color from a level-scaled range starting at `8..11` and adding one color every third level until `8..15`, and chooses graphic from a level-scaled range starting at `64..67` and growing on the non-color levels until `64..79`.
 
 ### init_game()
-Initializes level and score state.
+Initializes luck, level, and score state.
+
+### next_lv()
+Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the target, matrix, and queue for the new level.
 
 ### init_t()
 Initializes the target table with starting coordinates.
 
-### init_m(lc)
-Replaces the global matrix with a new 9x9 panel array. Each panel starts as graphic `1`, color `lc`, animation `40`.
+### init_m()
+Replaces the global matrix with a new 9x9 panel array. Looks up the current level color with `get_lc()`. Each panel starts as graphic `1`, color `lc`, animation `40`.
 
 ### init_q()
 Initializes the queue table with discard count `0`, first index `1`, last index `0`, and target size `3`.
@@ -80,7 +89,7 @@ Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` 
 Returns and removes the first panel in the queue. Returns nothing if the queue is empty.
 
 ### put_p()
-Attempts to place the first queue panel on the matrix cell under the target. Placement currently succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. On success, replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one discard from `q.d` until it reaches `0`, refills the queue with `fill_q()`, plays sound `7` if a row or column was completed, and plays sound `4`. On failure, plays sound `5` and returns.
+Attempts to place the first queue panel on the matrix cell under the target. Placement currently succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. On success, replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one discard from `q.d` until it reaches `0`, plays sound `7` if a row or column was completed, plays sound `4`, then immediately advances with `next_lv()` if `check_mlv()` passes. Otherwise it refills the queue with `fill_q()`. On failure, plays sound `5` and returns.
 
 ### upd_input()
 Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` discards the first queue panel with `discard_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.d` reaches `3`, input stops until the cart is restarted.
