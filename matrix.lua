@@ -43,12 +43,21 @@ end
 
 function check_mc(p,x,y)
  local n=m[y][x]
- if empty_m(n) or n.g==p.g then return true end
+ if empty_m(n) then return true end
+ if n.g==p.g then return true end
  if n.c==p.c then return true end
  if p.c==0 and n.c>=8 and n.c<=11 then return true end
  if n.c==0 and p.c>=8 and p.c<=11 then return true end
  if p.c==7 and n.c>=12 and n.c<=15 then return true end
  if n.c==7 and p.c>=12 and p.c<=15 then return true end
+ if p.g==142 or p.g==190 then
+  if n.c>=8 and n.c<=11 or n.c==0 then return true end
+  return
+ end
+ if p.g==143 or p.g==191 then
+  if n.c>=12 and n.c<=15 or n.c==7 then return true end
+  return
+ end
 end
 
 function init_m()

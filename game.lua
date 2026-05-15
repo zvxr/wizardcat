@@ -1,10 +1,14 @@
+function draw_lv()
+ print("level: "..lv,8,8,7)
+end
+
 function get_lc()
   return lv%4+1
 end
 
 function init_game()
   lk=1+flr(rnd(3))
-  lv=1    -- level
+  lv=4    -- level
   sc=0    -- score
 end
 

@@ -25,6 +25,9 @@ Cart version string.
 
 ## Functions
 
+### draw_lv()
+Draws the current level text as `level: {#}`.
+
 ### draw_t()
 Draws target graphic `2` as an overlay on top of the matrix using target coordinates from `t`. The target is drawn at the matching matrix tile position with no palette swap.
 
@@ -41,7 +44,7 @@ Checks whether panel `p` can be placed at matrix coordinate `(x,y)` based on the
 Checks whether the matrix is ready to advance the level. Returns true only when every matrix panel has been touched at least once, meaning no panel still has graphic `1`.
 
 ### check_mc(p,x,y)
-Checks whether panel `p` is compatible with the existing matrix panel at `(x,y)`. Empty panels and cleared panels always pass. Non-empty panels pass if the graphic matches, the color matches exactly, color `0` matches colors `8..11`, or color `7` matches colors `12..15`.
+Checks whether panel `p` is compatible with the existing matrix panel at `(x,y)`. Empty panels and cleared panels always pass. Special panels `142/190` match any neighbor whose color is in `8..11` or is `0`. Special panels `143/191` match any neighbor whose color is in `12..15` or is `7`. Other non-empty panels pass if the graphic matches, the color matches exactly, color `0` matches colors `8..11`, or color `7` matches colors `12..15`.
 
 ### draw_q()
 Draws the first live queue panel at tile coordinate `(2,3)`. Uses the normal panel draw path with level color `0`, so sprite color `5` is remapped to `0` and sprite color `6` is remapped to the panel color. Also draws the discard indicator at `(2,2)` using graphics `17`, `19`, or `20`, and when discards reach `3` draws a 2x2 game-over marker using graphics `35`, `36`, `51`, and `52`.
