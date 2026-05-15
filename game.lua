@@ -4,11 +4,11 @@ end
 
 function init_game()
   lv=1    -- level
-  cr=0    -- cracks
   sc=0    -- score
 end
 
 function upd_input()
+ if q.d>=3 then return end
  if btnp(0) then
   if t.x>1 then
    t.x-=1
@@ -37,6 +37,8 @@ function upd_input()
   else
    sfx(1)
   end
+ elseif btnp(4) then
+  discard_q()
  elseif btnp(5) then
   put_p()
  end

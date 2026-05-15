@@ -14,6 +14,19 @@ function draw_p(lc,p,x,y)
   return
  end
 
+ if pg>=112 and pg<=127 or pg>=190 and pg<=191 then
+  if p.a>0 then
+   pg-=ga*16
+  else
+   pg=1
+  end
+  pal(5,lc)
+  pal(6,p.c)
+  spr(pg,x*8,y*8)
+  pal()
+  return
+ end
+
  if pg==3 then
   pg+=ga
  elseif pg>=64 then

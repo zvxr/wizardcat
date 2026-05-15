@@ -12,13 +12,33 @@ function clear_q()
  q.l=0
 end
 
+function discard_q()
+ pop_q()
+ fill_q()
+ q.d+=1
+ sfx(6)
+end
+
 function draw_q()
  if q.f>q.l then return end
  draw_p(0,q[q.f],2,3)
+ if q.d==0 then
+  spr(17,16,16)
+ elseif q.d==1 then
+  spr(19,16,16)
+ elseif q.d==2 then
+  spr(20,16,16)
+ else
+  spr(35,16,16)
+  spr(36,24,16)
+  spr(51,16,24)
+  spr(52,24,24)
+ end
 end
 
 function init_q()
  q={
+  d=0,
   f=1,
   l=0,
   s=3
@@ -50,4 +70,3 @@ function upd_q()
     end
   end
 end
-
