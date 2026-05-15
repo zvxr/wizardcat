@@ -40,10 +40,10 @@ function draw_p(lc,p,x,y)
 end
 
 function get_lfp()
- if lv<10 or rnd(2)<1 then
+ if lv<6 then
   return {a=40,c=0,g=142}
  end
- return {a=40,c=7,g=143}
+ return {a=40,c=0,g=141+flr(rnd(lv<10 and 2 or 3))}
 end
 
 function get_lp()

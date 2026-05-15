@@ -28,7 +28,7 @@ function check_m(p,x,y)
   if not empty_m(m[y+1][x]) then n=true end
   if not check_mc(p,x,y+1) then return end
  end
- if not n and p.c!=0 and p.c!=7 then return end
+ if not n and p.c!=0 then return end
  return true
 end
 
@@ -44,20 +44,29 @@ end
 function check_mc(p,x,y)
  local n=m[y][x]
  if empty_m(n) then return true end
+ if p.g==140 or n.g==140 then return true end
  if n.g==p.g then return true end
+ if p.c==0 then
+  if p.g==141 then
+   if n.c>=10 and n.c<=13 or n.c==0 then return true end
+  elseif p.g==142 or p.g==190 then
+   if n.c>=8 and n.c<=11 or n.c==0 then return true end
+  elseif p.g==143 or p.g==191 then
+   if n.c>=12 and n.c<=15 or n.c==0 then return true end
+  end
+  return
+ end
+ if n.c==0 then
+  if n.g==141 then
+   if p.c>=10 and p.c<=13 then return true end
+  elseif n.g==142 or n.g==190 then
+   if p.c>=8 and p.c<=11 then return true end
+  elseif n.g==143 or n.g==191 then
+   if p.c>=12 and p.c<=15 then return true end
+  end
+  return
+ end
  if n.c==p.c then return true end
- if p.c==0 and n.c>=8 and n.c<=11 then return true end
- if n.c==0 and p.c>=8 and p.c<=11 then return true end
- if p.c==7 and n.c>=12 and n.c<=15 then return true end
- if n.c==7 and p.c>=12 and p.c<=15 then return true end
- if p.g==142 or p.g==190 then
-  if n.c>=8 and n.c<=11 or n.c==0 then return true end
-  return
- end
- if p.g==143 or p.g==191 then
-  if n.c>=12 and n.c<=15 or n.c==7 then return true end
-  return
- end
 end
 
 function init_m()

@@ -38,13 +38,13 @@ Draws the 9x9 panel matrix at tile coordinates starting from `(6,1)`. Passes the
 Draws one panel at tile coordinate `(x,y)`. Blank graphic `1` uses `p.a` to animate through graphics `9`, `8`, `7`, then `1`, with no palette swap. Cleared standard panels with graphics `112..127` and cleared starter panels `190..191` use reverse animation graphics and draw as blank graphic `1` when `a` reaches `0`, while still using level-border recoloring. Filled graphic `3` and standard play graphics `64` through `76` use `p.a` to choose an animated display graphic before drawing. Recolors sprite color `5` to the level color and sprite color `6` to the panel color.
 
 ### check_m(p,x,y)
-Checks whether panel `p` can be placed at matrix coordinate `(x,y)` based on the four cardinal neighbors. Only in-bounds neighbors are checked. Returns true only if every checked neighbor passes `check_mc()`. Panels whose color is not `0` or `7` must also touch at least one non-empty neighbor.
+Checks whether panel `p` can be placed at matrix coordinate `(x,y)` based on the four cardinal neighbors. Only in-bounds neighbors are checked. Returns true only if every checked neighbor passes `check_mc()`. Panels whose color is not `0` must also touch at least one non-empty neighbor.
 
 ### check_mlv()
 Checks whether the matrix is ready to advance the level. Returns true only when every matrix panel has been touched at least once, meaning no panel still has graphic `1`.
 
 ### check_mc(p,x,y)
-Checks whether panel `p` is compatible with the existing matrix panel at `(x,y)`. Empty panels and cleared panels always pass. Special panels `142/190` match any neighbor whose color is in `8..11` or is `0`. Special panels `143/191` match any neighbor whose color is in `12..15` or is `7`. Other non-empty panels pass if the graphic matches, the color matches exactly, color `0` matches colors `8..11`, or color `7` matches colors `12..15`.
+Checks whether panel `p` is compatible with the existing matrix panel at `(x,y)`. Empty panels and cleared panels always pass. Graphic `140` matches all panels. Panels with color `0` use their graphic to decide color-group matching: `141` matches the `10..13` group, `142/190` match the `8..11` group, and `143/191` match the `12..15` group. Other non-empty panels pass if the graphic matches or the color matches exactly.
 
 ### draw_q()
 Draws the first live queue panel at tile coordinate `(2,3)`. Uses the normal panel draw path with level color `0`, so sprite color `5` is remapped to `0` and sprite color `6` is remapped to the panel color. Also draws the discard indicator at `(2,2)` using graphics `17`, `19`, or `20`, and when discards reach `3` draws a 2x2 game-over marker using graphics `35`, `36`, `51`, and `52`.
@@ -59,7 +59,7 @@ Returns true when matrix panel `p` is treated as empty. This includes blank pane
 Returns the current level color from `lv`, looping through colors `1` to `4`.
 
 ### get_lfp()
-Returns a special first panel table with animation `40`. For levels `1` through `9`, always returns color `0`, graphic `142`. From level `10` onward, returns either `(0,142)` or `(7,143)` with a 50/50 chance.
+Returns a special first panel table with animation `40`. For levels `1` through `5`, returns `(0,142)`. From levels `6` through `9`, returns either `(0,141)` or `(0,142)` with equal chance. From level `10` onward, returns `(0,141)`, `(0,142)`, or `(0,143)` with equal chance.
 
 ### get_lp()
 Returns a new level panel table. Uses `lk` as a `1` to `3` percent chance to return `get_lfp()` instead. Otherwise sets animation to `40`, chooses panel color from a level-scaled range starting at `8..11` and adding one color every third level until `8..15`, and chooses graphic from a level-scaled range starting at `64..67` and growing on the non-color levels until `64..79`.
