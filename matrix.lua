@@ -32,7 +32,7 @@ function check_m(p,x,y)
  return true
 end
 
-function check_mlv()
+function check_mt()
  for y=1,9 do
   for x=1,9 do
    if m[y][x].g==1 then return end
@@ -84,6 +84,18 @@ function init_m()
   end
 end
 
+function count_mt()
+ local n=0
+ for y=1,9 do
+  for x=1,9 do
+   if m[y][x].g!=1 then
+    n+=1
+   end
+  end
+ end
+ return n
+end
+
 function put_p()
  local qp=q[q.f]
  if not empty_m(m[t.y][t.x]) or not check_m(qp,t.x,t.y) then
@@ -126,7 +138,7 @@ function put_p()
   sfx(7)
  end
  sfx(4)
- if check_mlv() then
+ if check_mt() then
   next_lv()
   return
  end

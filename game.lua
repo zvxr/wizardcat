@@ -15,9 +15,10 @@ end
 function next_lv()
  lv+=1
  sfx(8)
- init_t()
  init_m()
  init_q()
+ init_s()
+ init_t()
 end
 
 function upd_input()

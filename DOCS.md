@@ -20,6 +20,9 @@ Queue table. Holds `d` for discard count, `f` for first index, `l` for last inde
 ### sc
 Score counter.
 
+### s
+Staff table. Holds `a` for staff animation timing and `o` for idle animation odds growth.
+
 ### ver
 Cart version string.
 
@@ -40,14 +43,20 @@ Draws one panel at tile coordinate `(x,y)`. Blank graphic `1` uses `p.a` to anim
 ### check_m(p,x,y)
 Checks whether panel `p` can be placed at matrix coordinate `(x,y)` based on the four cardinal neighbors. Only in-bounds neighbors are checked. Returns true only if every checked neighbor passes `check_mc()`. Panels whose color is not `0` must also touch at least one non-empty neighbor.
 
-### check_mlv()
+### check_mt()
 Checks whether the matrix is ready to advance the level. Returns true only when every matrix panel has been touched at least once, meaning no panel still has graphic `1`.
 
 ### check_mc(p,x,y)
 Checks whether panel `p` is compatible with the existing matrix panel at `(x,y)`. Empty panels and cleared panels always pass. Graphic `140` matches all panels. Panels with color `0` use their graphic to decide color-group matching: `141` matches the `10..13` group, `142` matches the `8..11` group, and `143` matches the `12..15` group. Other non-empty panels pass if the graphic matches or the color matches exactly.
 
+### count_mt()
+Counts touched matrix panels. Returns the number of cells whose graphic is not `1`.
+
 ### draw_q()
 Draws the first live queue panel at tile coordinate `(2,3)`. Uses the normal panel draw path with level color `0`, so sprite color `5` is remapped to `0` and sprite color `6` is remapped to the panel color. Also draws the discard indicator at `(2,2)` using graphics `17`, `19`, or `20`, and when discards reach `3` draws a 2x2 game-over marker using graphics `35`, `36`, `51`, and `52`.
+
+### draw_s()
+Draws the full level-progress staff. Uses touched matrix count mapped proportionally from `0..81` into `0..28` visual fill steps. The base uses graphic `22` at `(2,14)`, and the upper shaft procedurally cycles graphics `56`, `40`, and `24` upward while recoloring filled colors to the current level color and unfilled colors to `0`. On graphic `24`, animation graphics `25..29` are only drawn when the third fill layer is active and `s.a` is running.
 
 ### discard_q()
 Discards the first queue panel, refills the queue, increments `q.d`, and plays sound `6`.
@@ -68,7 +77,7 @@ Returns a new level panel table. Uses `lk` as a `1` to `3` percent chance to ret
 Initializes luck, level, and score state.
 
 ### next_lv()
-Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the target, matrix, and queue for the new level.
+Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the matrix, queue, staff, and target for the new level.
 
 ### init_t()
 Initializes the target table with starting coordinates.
@@ -78,6 +87,9 @@ Replaces the global matrix with a new 9x9 panel array. Looks up the current leve
 
 ### init_q()
 Initializes the queue table with discard count `0`, first index `1`, last index `0`, and target size `3`.
+
+### init_s()
+Initializes the staff table with animation `0` and odds `0`.
 
 ### add_q(p)
 Appends panel `p` to the back of the queue.
@@ -92,7 +104,7 @@ Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` 
 Returns and removes the first panel in the queue. Returns nothing if the queue is empty.
 
 ### put_p()
-Attempts to place the first queue panel on the matrix cell under the target. Placement currently succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. On success, replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one discard from `q.d` until it reaches `0`, plays sound `7` if a row or column was completed, plays sound `4`, then immediately advances with `next_lv()` if `check_mlv()` passes. Otherwise it refills the queue with `fill_q()`. On failure, plays sound `5` and returns.
+Attempts to place the first queue panel on the matrix cell under the target. Placement currently succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. On success, replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one discard from `q.d` until it reaches `0`, plays sound `7` if a row or column was completed, plays sound `4`, then immediately advances with `next_lv()` if `check_mt()` passes. Otherwise it refills the queue with `fill_q()`. On failure, plays sound `5` and returns.
 
 ### upd_input()
 Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` discards the first queue panel with `discard_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.d` reaches `3`, input stops until the cart is restarted.
@@ -102,3 +114,6 @@ Reduces each matrix panel animation counter by `1` until it reaches `0`.
 
 ### upd_q()
 Reduces the animation counter of each live queue panel by `1` until it reaches `0`.
+
+### upd_s()
+Reduces the staff animation counter by `1` until it reaches `0`. When `a` is `0`, uses chance `rnd(3000)<1+s.o` to start a new animation at `24` and reset `o` to `0`; otherwise increments `o` by `1`.
