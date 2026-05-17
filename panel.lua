@@ -14,7 +14,7 @@ function draw_p(lc,p,x,y)
   return
  end
 
- if pg>=112 and pg<=127 or pg>=190 and pg<=191 then
+ if pg>=112 and pg<=127 or pg>=188 and pg<=191 then
   if p.a>0 then
    pg-=ga*16
   else

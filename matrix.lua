@@ -7,7 +7,7 @@ function draw_m(lc)
 end
 
 function empty_m(p)
- return p.g==1 or p.g>=112 and p.g<=127 or p.g>=190 and p.g<=191
+ return p.g==1 or p.g>=112 and p.g<=127 or p.g>=188 and p.g<=191
 end
 
 function check_m(p,x,y)
