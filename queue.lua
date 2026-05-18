@@ -16,6 +16,9 @@ function discard_q()
  pop_q()
  fill_q()
  q.d+=1
+ if q.d==2 then
+  put_w(102,60)
+ end
  sfx(6)
 end
 

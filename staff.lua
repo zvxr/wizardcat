@@ -38,7 +38,7 @@ function draw_s()
 end
 
 function init_s()
- s={a=0,o=0}
+ s={a=0,o=0,t=0}
 end
 
 function upd_s()
@@ -50,4 +50,9 @@ function upd_s()
   return
   end
  s.o+=1
+
+ if s.t==0 and count_mt()>=64 then
+  put_w(103,60)
+  s.t=1
+ end
 end
