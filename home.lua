@@ -7,13 +7,23 @@ function draw_h()
 end
 
 function draw_hg()
- rectfill(28,54,100,74,0)
- rect(28,54,100,74,7)
- print("game over",38,62,7)
+ if h.a>=15 then
+  spr(37,8,16)
+  spr(38,16,16)
+  spr(39,24,16)
+  spr(53,8,24)
+  spr(54,16,24)
+  spr(55,24,24)
+ end
+ rectfill(28,54,100,80,0)
+ rect(28,54,100,80,7)
+ print("game over",46,56,7)
+ print("continue on",38,68,5)
+ print("level "..min(lv,12),38,74,5)
 end
 
 function init_h()
- h={o=1,s=0,x=0}
+ h={a=0,o=1,s=0,x=0}
 end
 
 function pick_h()
@@ -35,11 +45,13 @@ function start_g(l)
  init_s()
  init_w()
  h.s=1
+ h.a=0
  h.x=0
  save_g()
 end
 
 function start_h()
+ h.a=0
  h.o=1
  h.s=0
  h.x=0
@@ -61,6 +73,9 @@ function upd_h()
 end
 
 function upd_hg()
+ if h.a<15 then
+  h.a+=1
+ end
  if btnp(5) then
   h.x+=1
   if h.x>1 then

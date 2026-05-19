@@ -6,7 +6,7 @@
 Bonus table. Holds owned bonus flags `ea`, `ju`, `ma`, `me`, `mo`, `ne`, `pl`, `sa`, `su`, `ur`, and `ve`. Also holds selection state `lv`, `on`, and `sel`.
 
 ### h
-Home table. Holds `o` for main-menu option, `s` for screen state, and `x` for game-over `x` press count.
+Home table. Holds `a` for the game-over animation delay, `o` for main-menu option, `s` for screen state, and `x` for game-over `x` press count.
 
 ### t
 Target table. Holds `x` and `y` tile coordinates.
@@ -38,7 +38,7 @@ Wizard table. Holds signed animation `a`, extra animation `ae`, message timer `a
 Draws the home screen. Uses the map region anchored at `(16,0)`, draws the main-screen wizard with `draw_wm()`, and prints the `normal`, `easy`, and `continue` menu options starting at tile `(21,7)`.
 
 ### draw_hg()
-Draws the game-over overlay used while `h.s==2`.
+Draws the game-over overlay used while `h.s==2`. After `15` frames of game-over time, also draws graphics `37,38,39,53,54,55` in a `3x2` block at tiles `(1,2)` through `(3,3)`. The box centers `game over`, then shows `continue on` and the capped continue level using `min(lv,12)` in dark grey text on separate lower lines.
 
 ### draw_b()
 Draws owned bonus graphics on the HUD. Level-5 bonus graphics draw at tile `(10,14)`, level-8 bonuses draw as a 2x2 graphic with top-left at `(12,12)`, and level-11 bonuses draw at `(14,14)`. Also draws preview markers using graphic `10` at `(4,6)`, `(4,9)`, and `(4,12)`, remapping sprite color `8` to `3` by default and to `11` when bonuses `me`, `sa`, or `ne` are active for that slot. During bonus selection, draws the currently highlighted option in that level's HUD slot instead.
@@ -47,7 +47,7 @@ Draws owned bonus graphics on the HUD. Level-5 bonus graphics draw at tile `(10,
 Draws a 2x2 bonus graphic block using top-left graphic `g` at pixel position `(x,y)`.
 
 ### draw_lv()
-Draws the current level text as `level: {#}`.
+Draws the current level text as `level: {#}` at pixel `(4,8)`.
 
 ### draw_t()
 Draws target graphic `2` as an overlay on top of the matrix using target coordinates from `t`. The target is drawn at the matching matrix tile position with no palette swap.
@@ -122,7 +122,7 @@ Loads owned bonus flags from bitmask integer `v`.
 Loads saved level and bonus state from PICO-8 cart storage, reinitializes gameplay systems, and starts play mode. If the loaded level is a bonus-selection level with no bonus chosen for that tier yet, it enters `start_b()`.
 
 ### init_h()
-Initializes the home table with option `1`, screen state `0`, and game-over press count `0`.
+Initializes the home table with game-over animation delay `0`, option `1`, screen state `0`, and game-over press count `0`.
 
 ### next_lv()
 Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the matrix, queue, staff, and target for the new level. Saves the new level and current bonuses to PICO-8 cart storage. At levels `5`, `8`, and `11`, enters bonus selection with `start_b()`.
@@ -170,10 +170,10 @@ Replaces the current wizard message with id `m` and timer `am`.
 Starts bonus selection. Sets `b.lv` from the current level, enables `b.on`, resets the selection index to `1`, and shows wizard message `104` as a persistent prompt.
 
 ### start_g(l)
-Starts gameplay from level `l`. Reinitializes bonuses, game state, target, matrix, queue, staff, and wizard, saves that fresh state, then sets `h.s` to play.
+Starts gameplay from level `l`. Reinitializes bonuses, game state, target, matrix, queue, staff, and wizard, resets the game-over animation state, saves that fresh state, then sets `h.s` to play.
 
 ### start_h()
-Returns to the home screen. Resets home selection state and reinitializes the wizard.
+Returns to the home screen. Resets home selection state, clears the game-over animation state, and reinitializes the wizard.
 
 ### has_bl()
 Checks whether the current level's bonus slot has already been chosen. Returns true for non-bonus levels.
@@ -182,7 +182,7 @@ Checks whether the current level's bonus slot has already been chosen. Returns t
 Clears saved bonus state, stores level `l` into PICO-8 cart storage, and starts a fresh game from that level.
 
 ### save_g()
-Stores the current level and current bonus bitmask into PICO-8 cart storage.
+Stores the current bonus bitmask and the current level capped to `12` into PICO-8 cart storage.
 
 ### upd_input()
 Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` discards the first queue panel with `discard_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.d` reaches `3`, input stops until the cart is restarted.
@@ -194,7 +194,7 @@ Handles bonus selection input while `b.on` is active. Left and right cycle throu
 Handles home-menu input. Up and down cycle through the three menu options with wrapping and play sound `3`. Button `5` confirms the current option with `pick_h()`.
 
 ### upd_hg()
-Handles game-over input. Each press of button `5` increments `h.x`; on the second press it returns to the home screen with `start_h()`.
+Handles game-over input. Increments `h.a` up to `15` to drive the delayed lose animation. Each press of button `5` increments `h.x`; on the second press it returns to the home screen with `start_h()`.
 
 ### upd_m()
 Reduces each matrix panel animation counter by `1` until it reaches `0`.

@@ -1,5 +1,5 @@
 function draw_lv()
- print("level: "..lv,8,8,7)
+ print("level: "..lv,4,8,7)
 end
 
 function get_lc()
@@ -62,7 +62,7 @@ function reset_g(l)
 end
 
 function save_g()
- dset(0,lv)
+ dset(0,min(lv,12))
  dset(1,get_bv())
 end
 
