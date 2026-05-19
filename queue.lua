@@ -15,9 +15,13 @@ end
 function discard_q()
  pop_q()
  fill_q()
- q.d+=1
- if q.d==2 then
-  put_w(102,60)
+ if b.mo>0 and q.d==0 and rnd(100)<lk or b.ur>0 and q.d==2 and rnd(100)<lk then
+  sfx(9)
+ else
+  q.d+=1
+  if q.d==2 then
+   put_w(102,60)
+  end
  end
  sfx(6)
 end
@@ -25,6 +29,15 @@ end
 function draw_q()
  if q.f>q.l then return end
  draw_p(0,q[q.f],2,3)
+ if b.me>0 and q.f<q.l then
+  draw_p(0,q[q.f+1],4,5)
+ end
+ if b.sa>0 and q.f+2<=q.l then
+  draw_p(0,q[q.f+2],4,8)
+ end
+ if b.ne>0 and q.f+3<=q.l then
+  draw_p(0,q[q.f+3],4,11)
+ end
  if q.d==0 then
   spr(17,16,16)
  elseif q.d==1 then
@@ -44,17 +57,25 @@ function init_q()
   d=0,
   f=1,
   l=0,
-  s=3
+  s=b.ne>0 and 4 or 3
  }
  fill_q()
 end
 
 function fill_q()
   if q.f>q.l then
-    add_q(get_lfp())
+    if b.ea>0 then
+      add_q({a=40,c=0,g=140})
+    else
+      add_q(get_lfp())
+    end
   end
   for i=q.l-q.f+2,q.s do
-    add_q(get_lp())
+    if b.su>0 and rnd(100)<lk then
+      add_q({a=40,c=0,g=139})
+    else
+      add_q(get_lp())
+    end
   end
 end
 

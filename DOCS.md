@@ -2,6 +2,9 @@
 
 ## Globals
 
+### b
+Bonus table. Holds owned bonus flags `ea`, `ju`, `ma`, `me`, `mo`, `ne`, `pl`, `sa`, `su`, `ur`, and `ve`. Also holds selection state `lv`, `on`, and `sel`.
+
 ### t
 Target table. Holds `x` and `y` tile coordinates.
 
@@ -31,6 +34,12 @@ Wizard table. Holds signed animation `a`, extra animation `ae`, message timer `a
 
 ## Functions
 
+### draw_b()
+Draws owned bonus graphics on the HUD. Level-5 bonus graphics draw at tile `(10,14)`, level-8 bonuses draw as a 2x2 graphic with top-left at `(12,12)`, and level-11 bonuses draw at `(14,14)`. Also draws preview markers using graphic `10` at `(4,6)`, `(4,9)`, and `(4,12)`, remapping sprite color `8` to `3` by default and to `11` when bonuses `me`, `sa`, or `ne` are active for that slot. During bonus selection, draws the currently highlighted option in that level's HUD slot instead.
+
+### draw_bb(g,x,y)
+Draws a 2x2 bonus graphic block using top-left graphic `g` at pixel position `(x,y)`.
+
 ### draw_lv()
 Draws the current level text as `level: {#}`.
 
@@ -56,7 +65,7 @@ Checks whether panel `p` is compatible with the existing matrix panel at `(x,y)`
 Counts touched matrix panels. Returns the number of cells whose graphic is not `1`.
 
 ### draw_q()
-Draws the first live queue panel at tile coordinate `(2,3)`. Uses the normal panel draw path with level color `0`, so sprite color `5` is remapped to `0` and sprite color `6` is remapped to the panel color. Also draws the discard indicator at `(2,2)` using graphics `17`, `19`, or `20`, and when discards reach `3` draws a 2x2 game-over marker using graphics `35`, `36`, `51`, and `52`.
+Draws the first live queue panel at tile coordinate `(2,3)`. Uses the normal panel draw path with level color `0`, so sprite color `5` is remapped to `0` and sprite color `6` is remapped to the panel color. When bonus `me` is active, also draws `q[1]` at tile `(4,5)`. When bonus `sa` is active, draws `q[2]` at tile `(4,8)`. When bonus `ne` is active, draws `q[3]` at tile `(4,11)`. Also draws the discard indicator at `(2,2)` using graphics `17`, `19`, or `20`, and when discards reach `3` draws a 2x2 game-over marker using graphics `35`, `36`, `51`, and `52`.
 
 ### draw_s()
 Draws the full level-progress staff. Uses touched matrix count mapped proportionally from `0..81` into `0..28` visual fill steps. The base uses graphic `22` at `(2,14)`, and the upper shaft procedurally cycles graphics `56`, `40`, and `24` upward while recoloring filled colors to the current level color and unfilled colors to `0`. On graphic `24`, animation graphics `25..29` are only drawn when the third fill layer is active and `s.a` is running.
@@ -65,7 +74,7 @@ Draws the full level-progress staff. Uses touched matrix count mapped proportion
 Draws the wizard at tile coordinates `(9,12)` and `(9,13)`. Uses graphics `131/147` when `w.a==0`, `132/148` when `w.a<0`, and `133/149` when `w.a>0`. Also draws graphic `145` at `(7,13)` when `w.ae==0` and graphic `164` when `w.ae>0`. If `w.m>0`, prints the current wizard message at tile `(9,11)`.
 
 ### discard_q()
-Discards the first queue panel, refills the queue, increments `q.d`, and plays sound `6`. When `q.d` reaches `2`, also shows wizard message `102`.
+Discards the first queue panel, refills the queue, and plays sound `6`. When bonus `mo` is active and `q.d` is `0`, or bonus `ur` is active and `q.d` is `2`, there is an `lk` percent chance the discard does not increase `q.d`, in which case sound `9` also plays. Otherwise the discard count increases normally. When `q.d` reaches `2`, also shows wizard message `102`.
 
 ### empty_m(p)
 Returns true when matrix panel `p` is treated as empty. This includes blank panels with graphic `1`, cleared standard panels with graphics `112..127`, and cleared special panels `188..191`.
@@ -79,14 +88,23 @@ Returns a special first panel table with animation `40`. For levels `1` through 
 ### get_lp()
 Returns a new level panel table. Uses `lk` as a `1` to `3` percent chance to return `get_lfp()` instead. Otherwise sets animation to `40`, chooses panel color from a level-scaled range starting at `8..11` and adding one color every third level until `8..15`, and chooses graphic from a level-scaled range starting at `64..67` and growing on the non-color levels until `64..79`.
 
+### get_bg(i)
+Returns the current level's bonus graphic for selection index `i`.
+
+### get_bm(i)
+Returns the current level's wizard message id for selection index `i`.
+
 ### get_wm(m)
-Returns wizard message text for message id `m`. Current ids include `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `201` for `i like minnows.`, `202` for `magic is cool.`, and `203` for `meow`.
+Returns wizard message text for message id `m`. Current ids include `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `104` for `select bonus`, `105` for `show next`, `106` for `more luck`, `107` for `rainbow`, `108` for `free disc`, `109` for `recover+`, `110` for `more luck`, `111` for `near future`, `112` for `remove`, `113` for `last free`, `114` for `far future`, `115` for `more luck`, `201` for `I <3 minnows`, `202` for `magic is cool`, and `203` for `meow`.
 
 ### init_game()
 Initializes luck, level, and score state.
 
+### init_b()
+Initializes the bonus table with no owned level-5 bonuses and selection state cleared.
+
 ### next_lv()
-Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the matrix, queue, staff, and target for the new level.
+Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the matrix, queue, staff, and target for the new level. At levels `5`, `8`, and `11`, enters bonus selection with `start_b()`.
 
 ### init_t()
 Initializes the target table with starting coordinates.
@@ -95,7 +113,7 @@ Initializes the target table with starting coordinates.
 Replaces the global matrix with a new 9x9 panel array. Looks up the current level color with `get_lc()`. Each panel starts as graphic `1`, color `lc`, animation `40`.
 
 ### init_q()
-Initializes the queue table with discard count `0`, first index `1`, last index `0`, and target size `3`.
+Initializes the queue table with discard count `0`, first index `1`, last index `0`, and target size `3`, or `4` when bonus `ne` is active.
 
 ### init_s()
 Initializes the staff table with animation `0`, odds `0`, and threshold-message flag `0`.
@@ -110,19 +128,28 @@ Appends panel `p` to the back of the queue.
 Clears queued panel references in place, then resets first index to `1` and last index to `0`. Keeps the existing queue size setting in `q.s`.
 
 ### fill_q()
-Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` first, then fills remaining slots with `get_lp()`. Uses the live count `q.l-q.f+1`, so refills continue to work after pops.
+Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` first, unless bonus `ea` is active, in which case it adds graphic `140` instead. Then fills remaining slots with `get_lp()`, unless bonus `su` is active and a raw `lk` percent roll replaces that panel with graphic `139`. Uses the live count `q.l-q.f+1`, so refills continue to work after pops.
+
+### pick_b()
+Applies the currently selected bonus for the current bonus level, clears bonus-select mode, and clears the wizard message. Luck bonuses `ve`, `ju`, and `pl` immediately add `1..3` to `lk`. Bonus `ea` also immediately replaces the current first queue panel with graphic `140`. Bonus `ne` immediately raises queue size to `4` and refills it.
 
 ### pop_q()
 Returns and removes the first panel in the queue. Returns nothing if the queue is empty.
 
 ### put_p()
-Attempts to place the first queue panel on the matrix cell under the target. Placement currently succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. On success, replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one discard from `q.d` until it reaches `0`, plays sound `7` if a row or column was completed, plays sound `4`, then immediately advances with `next_lv()` if `check_mt()` passes. Otherwise it refills the queue with `fill_q()`. On failure, plays sound `5` and returns.
+Attempts to place the first queue panel on the matrix cell under the target. Placement normally succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. Graphic `139` instead places onto any non-empty panel, immediately clears that panel by adding `48` to its graphic and setting animation to `40`, then refills the queue. Normal successful placement replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one discard from `q.d` until it reaches `0`, or two when bonus `ma` is active, plays sound `7` if a row or column was completed, plays sound `4`, then immediately advances with `next_lv()` if `check_mt()` passes. Otherwise it refills the queue with `fill_q()`. On failure, plays sound `5` and returns.
 
 ### put_w(m,am)
 Replaces the current wizard message with id `m` and timer `am`.
 
+### start_b()
+Starts bonus selection. Sets `b.lv` from the current level, enables `b.on`, resets the selection index to `1`, and shows wizard message `104` as a persistent prompt.
+
 ### upd_input()
 Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` discards the first queue panel with `discard_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.d` reaches `3`, input stops until the cart is restarted.
+
+### upd_b()
+Handles bonus selection input while `b.on` is active. Left and right cycle through the current level's bonus options with wrapping and replace the wizard message using `get_bm()`. Level `5` has five options; levels `8` and `11` have three each. Button `5` confirms the current selection with `pick_b()`.
 
 ### upd_m()
 Reduces each matrix panel animation counter by `1` until it reaches `0`.

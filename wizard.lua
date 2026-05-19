@@ -27,8 +27,20 @@ function get_wm(m)
  if m==101 then return "welcome" end
  if m==102 then return "be careful..." end
  if m==103 then return "almost there" end
- if m==201 then return "i like minnows." end
- if m==202 then return "magic is cool." end
+ if m==104 then return "select bonus" end
+ if m==105 then return "show next" end
+ if m==106 then return "more luck" end
+ if m==107 then return "rainbow" end
+ if m==108 then return "free disc" end
+ if m==109 then return "recover+" end
+ if m==110 then return "more luck" end
+ if m==111 then return "near future" end
+ if m==112 then return "remove" end
+ if m==113 then return "last free" end
+ if m==114 then return "far future" end
+ if m==115 then return "more luck" end
+ if m==201 then return "I <3 minnows" end
+ if m==202 then return "magic is cool" end
  if m==203 then return "meow" end
 end
 

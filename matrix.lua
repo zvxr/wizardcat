@@ -11,6 +11,9 @@ function empty_m(p)
 end
 
 function check_m(p,x,y)
+ if p.g==139 then
+  return not empty_m(m[y][x])
+ end
  local n=false
  if x>1 then
   if not empty_m(m[y][x-1]) then n=true end
@@ -98,6 +101,25 @@ end
 
 function put_p()
  local qp=q[q.f]
+ if qp.g==139 then
+  if not check_m(qp,t.x,t.y) then
+   sfx(5)
+   return
+  end
+  m[t.y][t.x].g+=48
+  m[t.y][t.x].a=40
+  pop_q()
+  if q.d>0 then
+   q.d=max(0,q.d-(b.ma>0 and 2 or 1))
+  end
+  sfx(4)
+  if check_mt() then
+   next_lv()
+   return
+  end
+  fill_q()
+  return
+ end
  if not empty_m(m[t.y][t.x]) or not check_m(qp,t.x,t.y) then
   sfx(5)
   return
@@ -132,7 +154,7 @@ function put_p()
   end
  end
  if q.d>0 then
-  q.d-=1
+  q.d=max(0,q.d-(b.ma>0 and 2 or 1))
  end
  if fy or fx then
   sfx(7)

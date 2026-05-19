@@ -19,6 +19,9 @@ function next_lv()
  init_q()
  init_s()
  init_t()
+ if lv==5 or lv==8 or lv==11 then
+  start_b()
+ end
 end
 
 function upd_input()
