@@ -6,10 +6,40 @@ function get_lc()
   return lv%4+1
 end
 
-function init_game()
+function has_bl()
+ if lv==5 then
+  return b.ea>0 or b.ma>0 or b.me>0 or b.mo>0 or b.ve>0
+ end
+ if lv==8 then
+  return b.ju>0 or b.sa>0 or b.su>0
+ end
+ if lv==11 then
+  return b.ne>0 or b.pl>0 or b.ur>0
+ end
+ return true
+end
+
+function init_game(l)
   lk=1+flr(rnd(3))
-  lv=4    -- level
-  sc=0    -- score
+  lv=l
+end
+
+function load_g()
+ local l=flr(dget(0))
+ if l<1 then l=4 end
+ init_b()
+ load_b(flr(dget(1)))
+ init_game(l)
+ init_t()
+ init_m()
+ init_q()
+ init_s()
+ init_w()
+ h.s=1
+ h.x=0
+ if not has_bl() then
+  start_b()
+ end
 end
 
 function next_lv()
@@ -19,9 +49,21 @@ function next_lv()
  init_q()
  init_s()
  init_t()
+ save_g()
  if lv==5 or lv==8 or lv==11 then
   start_b()
  end
+end
+
+function reset_g(l)
+ dset(0,l)
+ dset(1,0)
+ start_g(l)
+end
+
+function save_g()
+ dset(0,lv)
+ dset(1,get_bv())
 end
 
 function upd_input()

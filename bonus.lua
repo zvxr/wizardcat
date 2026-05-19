@@ -65,6 +65,22 @@ function get_bm(i)
  return 112+i
 end
 
+function get_bv()
+ local v=0
+ if b.ea>0 then v+=1 end
+ if b.ju>0 then v+=2 end
+ if b.ma>0 then v+=4 end
+ if b.me>0 then v+=8 end
+ if b.mo>0 then v+=16 end
+ if b.ne>0 then v+=32 end
+ if b.pl>0 then v+=64 end
+ if b.sa>0 then v+=128 end
+ if b.su>0 then v+=256 end
+ if b.ur>0 then v+=512 end
+ if b.ve>0 then v+=1024 end
+ return v
+end
+
 function init_b()
  b={
   ea=0,
@@ -82,6 +98,20 @@ function init_b()
   ur=0,
   ve=0
  }
+end
+
+function load_b(v)
+ b.ea=v%2
+ b.ju=flr(v/2)%2
+ b.ma=flr(v/4)%2
+ b.me=flr(v/8)%2
+ b.mo=flr(v/16)%2
+ b.ne=flr(v/32)%2
+ b.pl=flr(v/64)%2
+ b.sa=flr(v/128)%2
+ b.su=flr(v/256)%2
+ b.ur=flr(v/512)%2
+ b.ve=flr(v/1024)%2
 end
 
 function pick_b()
@@ -122,6 +152,7 @@ function pick_b()
  end
  b.on=0
  put_w(0,0)
+ save_g()
 end
 
 function start_b()

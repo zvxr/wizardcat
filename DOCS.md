@@ -5,6 +5,9 @@
 ### b
 Bonus table. Holds owned bonus flags `ea`, `ju`, `ma`, `me`, `mo`, `ne`, `pl`, `sa`, `su`, `ur`, and `ve`. Also holds selection state `lv`, `on`, and `sel`.
 
+### h
+Home table. Holds `o` for main-menu option, `s` for screen state, and `x` for game-over `x` press count.
+
 ### t
 Target table. Holds `x` and `y` tile coordinates.
 
@@ -20,9 +23,6 @@ Current level integer. `get_lc()` maps this to a level color with `lv%4+1`.
 ### q
 Queue table. Holds `d` for discard count, `f` for first index, `l` for last index, and `s` for target size.
 
-### sc
-Score counter.
-
 ### s
 Staff table. Holds `a` for staff animation timing, `o` for idle animation odds growth, and `t` for whether the 80%-full wizard message has already been shown this level.
 
@@ -33,6 +33,12 @@ Cart version string.
 Wizard table. Holds signed animation `a`, extra animation `ae`, message timer `am`, message id `m`, and idle odds `o` and `oe`.
 
 ## Functions
+
+### draw_h()
+Draws the home screen. Uses the map region anchored at `(16,0)`, draws the main-screen wizard with `draw_wm()`, and prints the `normal`, `easy`, and `continue` menu options starting at tile `(21,7)`.
+
+### draw_hg()
+Draws the game-over overlay used while `h.s==2`.
 
 ### draw_b()
 Draws owned bonus graphics on the HUD. Level-5 bonus graphics draw at tile `(10,14)`, level-8 bonuses draw as a 2x2 graphic with top-left at `(12,12)`, and level-11 bonuses draw at `(14,14)`. Also draws preview markers using graphic `10` at `(4,6)`, `(4,9)`, and `(4,12)`, remapping sprite color `8` to `3` by default and to `11` when bonuses `me`, `sa`, or `ne` are active for that slot. During bonus selection, draws the currently highlighted option in that level's HUD slot instead.
@@ -73,6 +79,9 @@ Draws the full level-progress staff. Uses touched matrix count mapped proportion
 ### draw_w()
 Draws the wizard at tile coordinates `(9,12)` and `(9,13)`. Uses graphics `131/147` when `w.a==0`, `132/148` when `w.a<0`, and `133/149` when `w.a>0`. Also draws graphic `145` at `(7,13)` when `w.ae==0` and graphic `164` when `w.ae>0`. If `w.m>0`, prints the current wizard message at tile `(9,11)`.
 
+### draw_wm()
+Draws the main-screen wizard. Uses the same animation state as `draw_w()`, but at map-space positions `(21,12)`, `(21,13)`, and `(19,13)`, which render at screen pixels `(40,96)`, `(40,104)`, and `(24,104)`. If `w.m>0`, prints the current wizard message at tile `(21,11)`.
+
 ### discard_q()
 Discards the first queue panel, refills the queue, and plays sound `6`. When bonus `mo` is active and `q.d` is `0`, or bonus `ur` is active and `q.d` is `2`, there is an `lk` percent chance the discard does not increase `q.d`, in which case sound `9` also plays. Otherwise the discard count increases normally. When `q.d` reaches `2`, also shows wizard message `102`.
 
@@ -94,17 +103,29 @@ Returns the current level's bonus graphic for selection index `i`.
 ### get_bm(i)
 Returns the current level's wizard message id for selection index `i`.
 
+### get_bv()
+Returns the current bonus selections as a bitmask integer for PICO-8 cart storage.
+
 ### get_wm(m)
 Returns wizard message text for message id `m`. Current ids include `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `104` for `select bonus`, `105` for `show next`, `106` for `more luck`, `107` for `rainbow`, `108` for `free disc`, `109` for `recover+`, `110` for `more luck`, `111` for `near future`, `112` for `remove`, `113` for `last free`, `114` for `far future`, `115` for `more luck`, `201` for `I <3 minnows`, `202` for `magic is cool`, and `203` for `meow`.
 
 ### init_game()
-Initializes luck, level, and score state.
+Initializes luck and level state from input level `l`.
 
 ### init_b()
 Initializes the bonus table with no owned level-5 bonuses and selection state cleared.
 
+### load_b(v)
+Loads owned bonus flags from bitmask integer `v`.
+
+### load_g()
+Loads saved level and bonus state from PICO-8 cart storage, reinitializes gameplay systems, and starts play mode. If the loaded level is a bonus-selection level with no bonus chosen for that tier yet, it enters `start_b()`.
+
+### init_h()
+Initializes the home table with option `1`, screen state `0`, and game-over press count `0`.
+
 ### next_lv()
-Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the matrix, queue, staff, and target for the new level. At levels `5`, `8`, and `11`, enters bonus selection with `start_b()`.
+Advances to the next level immediately. Increments `lv`, plays sound `8`, then resets the matrix, queue, staff, and target for the new level. Saves the new level and current bonuses to PICO-8 cart storage. At levels `5`, `8`, and `11`, enters bonus selection with `start_b()`.
 
 ### init_t()
 Initializes the target table with starting coordinates.
@@ -133,6 +154,9 @@ Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` 
 ### pick_b()
 Applies the currently selected bonus for the current bonus level, clears bonus-select mode, and clears the wizard message. Luck bonuses `ve`, `ju`, and `pl` immediately add `1..3` to `lk`. Bonus `ea` also immediately replaces the current first queue panel with graphic `140`. Bonus `ne` immediately raises queue size to `4` and refills it.
 
+### pick_h()
+Applies the selected home-menu option. `normal` starts gameplay at level `4` and clears saved progress, `easy` starts at level `1` and clears saved progress, and `continue` loads the saved level and bonus state from PICO-8 cart storage.
+
 ### pop_q()
 Returns and removes the first panel in the queue. Returns nothing if the queue is empty.
 
@@ -145,11 +169,32 @@ Replaces the current wizard message with id `m` and timer `am`.
 ### start_b()
 Starts bonus selection. Sets `b.lv` from the current level, enables `b.on`, resets the selection index to `1`, and shows wizard message `104` as a persistent prompt.
 
+### start_g(l)
+Starts gameplay from level `l`. Reinitializes bonuses, game state, target, matrix, queue, staff, and wizard, saves that fresh state, then sets `h.s` to play.
+
+### start_h()
+Returns to the home screen. Resets home selection state and reinitializes the wizard.
+
+### has_bl()
+Checks whether the current level's bonus slot has already been chosen. Returns true for non-bonus levels.
+
+### reset_g(l)
+Clears saved bonus state, stores level `l` into PICO-8 cart storage, and starts a fresh game from that level.
+
+### save_g()
+Stores the current level and current bonus bitmask into PICO-8 cart storage.
+
 ### upd_input()
 Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` discards the first queue panel with `discard_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.d` reaches `3`, input stops until the cart is restarted.
 
 ### upd_b()
 Handles bonus selection input while `b.on` is active. Left and right cycle through the current level's bonus options with wrapping and replace the wizard message using `get_bm()`. Level `5` has five options; levels `8` and `11` have three each. Button `5` confirms the current selection with `pick_b()`.
+
+### upd_h()
+Handles home-menu input. Up and down cycle through the three menu options with wrapping and play sound `3`. Button `5` confirms the current option with `pick_h()`.
+
+### upd_hg()
+Handles game-over input. Each press of button `5` increments `h.x`; on the second press it returns to the home screen with `start_h()`.
 
 ### upd_m()
 Reduces each matrix panel animation counter by `1` until it reaches `0`.

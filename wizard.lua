@@ -19,6 +19,27 @@ function draw_w()
  end
 end
 
+function draw_wm()
+ if w.a<0 then
+  spr(132,40,96)
+  spr(148,40,104)
+ elseif w.a>0 then
+  spr(133,40,96)
+  spr(149,40,104)
+ else
+  spr(131,40,96)
+  spr(147,40,104)
+ end
+ if w.ae>0 then
+  spr(164,24,104)
+ else
+  spr(145,24,104)
+ end
+ if w.m>0 then
+  print(get_wm(w.m),40,88,7)
+ end
+end
+
 function init_w()
  w={a=0,ae=0,am=60,m=101,o=0,oe=0}
 end
