@@ -15,7 +15,7 @@ end
 function discard_q()
  pop_q()
  fill_q()
- if b.mo>0 and q.d==0 and rnd(100)<lk or b.ur>0 and q.d==2 and rnd(100)<lk then
+ if rnd(100)<lk*((b.mo>0 and 1 or 0)+(b.ur>0 and 1 or 0)) then
   sfx(9)
  else
   q.d+=1

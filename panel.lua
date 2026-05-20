@@ -27,9 +27,7 @@ function draw_p(lc,p,x,y)
   return
  end
 
- if pg==3 then
-  pg+=ga
- elseif pg>=64 then
+ if pg>=64 then
   pg+=ga*16
  end
 

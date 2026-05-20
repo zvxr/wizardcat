@@ -1,5 +1,6 @@
 function draw_h()
  map(16,0,0,0,16,16)
+ draw_hp()
  draw_wm()
  print("normal",40,56,h.o==1 and 11 or 7)
  print("easy",40,64,h.o==2 and 11 or 7)
@@ -22,8 +23,37 @@ function draw_hg()
  print("level "..min(lv,12),38,74,5)
 end
 
+function draw_hp()
+ local a=h.p.a
+ local pg=h.p.g
+ local p={c=h.p.c,g=pg}
+ if a<1 then return end
+ if a<41 then
+  p.a=a
+ elseif a<71 then
+  p.a=40
+ else
+  p.a=111-a
+ end
+ draw_p(0,p,8,13)
+end
+
+function get_hp()
+ local p=get_lp()
+ p.a=1
+ p.g+=48
+ return p
+end
+
+function get_ho()
+ local l=flr(dget(0))
+ if l==1 then return 2 end
+ if l>1 and l!=4 then return 3 end
+ return 1
+end
+
 function init_h()
- h={a=0,o=1,s=0,x=0}
+ h={a=0,o=get_ho(),p={a=0,c=0,g=1},po=0,s=0,x=0}
 end
 
 function pick_h()
@@ -52,13 +82,26 @@ end
 
 function start_h()
  h.a=0
- h.o=1
+ h.o=get_ho()
+ h.p={a=0,c=0,g=1}
+ h.po=0
  h.s=0
  h.x=0
  init_w()
 end
 
 function upd_h()
+ if h.p.a>0 then
+  h.p.a+=1
+  if h.p.a>110 then
+   h.p.a=0
+  end
+ elseif rnd(1000)<1+h.po then
+  h.p=get_hp()
+  h.po=0
+ else
+  h.po+=1
+ end
  if btnp(2) then
   h.o-=1
   if h.o<1 then h.o=3 end
