@@ -73,6 +73,7 @@ function start_g(l)
  init_m()
  init_q()
  init_s()
+ init_i()
  init_w()
  h.s=1
  h.a=0

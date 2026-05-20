@@ -117,6 +117,7 @@ function put_p()
    next_lv()
    return
   end
+  put_i()
   fill_q()
   return
  end
@@ -164,6 +165,7 @@ function put_p()
   next_lv()
   return
  end
+ put_i(fy or fx)
  fill_q()
 end
 

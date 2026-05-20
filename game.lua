@@ -34,6 +34,7 @@ function load_g()
  init_m()
  init_q()
  init_s()
+ init_i()
  init_w()
  h.s=1
  h.x=0
@@ -49,6 +50,7 @@ function next_lv()
  init_q()
  init_s()
  init_t()
+ init_i()
  save_g()
  if lv==5 or lv==8 or lv==11 then
   start_b()
@@ -66,36 +68,51 @@ function save_g()
  dset(1,get_bv())
 end
 
-function upd_input()
- if q.d>=3 then return end
- if btnp(0) then
+function move_t(x,y)
+ if x<0 then
   if t.x>1 then
    t.x-=1
    sfx(3)
   else
    sfx(1)
   end
- elseif btnp(1) then
+ elseif x>0 then
   if t.x<9 then
    t.x+=1
    sfx(3)
   else
    sfx(1)
   end
- elseif btnp(2) then
+ elseif y<0 then
   if t.y>1 then
    t.y-=1
    sfx(3)
   else
    sfx(1)
   end
- elseif btnp(3) then
+ elseif y>0 then
   if t.y<9 then
    t.y+=1
    sfx(3)
   else
    sfx(1)
   end
+ end
+end
+
+function upd_input()
+ if q.d>=3 then return end
+ if use_i() then
+  return
+ end
+ if btnp(0) then
+  move_t(-1,0)
+ elseif btnp(1) then
+  move_t(1,0)
+ elseif btnp(2) then
+  move_t(0,-1)
+ elseif btnp(3) then
+  move_t(0,1)
  elseif btnp(4) then
   discard_q()
  elseif btnp(5) then

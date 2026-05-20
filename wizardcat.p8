@@ -10,10 +10,12 @@ __lua__
 #include panel.lua
 #include queue.lua
 #include staff.lua
+#include tutorial.lua
 #include wizard.lua
 
 b=nil
 h=nil
+i=nil
 lk=0
 lv=0
 m=nil
@@ -38,6 +40,7 @@ function _draw()
   draw_t()
   draw_q()
   draw_w()
+  draw_i()
   if h.s==2 then
     draw_hg()
   end
@@ -62,6 +65,7 @@ function _update()
       upd_m()
       upd_q()
       upd_s()
+      upd_i()
     end
     if q.d>=3 then
       h.s=2

@@ -71,6 +71,10 @@ function put_w(m,am)
 end
 
 function upd_w()
+ if i and i.s>0 then
+  w.m=0
+  w.am=0
+ end
  if w.a<0 then
   w.a+=1
  elseif w.a>0 then
@@ -96,7 +100,7 @@ function upd_w()
   if w.am==0 then
    w.m=0
   end
- elseif w.m==0 then
+ elseif w.m==0 and (not i or i.s<1) then
   if rnd(10000)<1 then
    put_w(201,60)
   elseif rnd(10000)<1 then

@@ -23,6 +23,7 @@ function discard_q()
    put_w(102,60)
   end
  end
+ z_i()
  sfx(6)
 end
 
@@ -59,6 +60,12 @@ function init_q()
   l=0,
   s=b.ne>0 and 4 or 3
  }
+ if lv==1 then
+  add_q({a=40,c=0,g=142})
+  add_q({a=40,c=8,g=67})
+  add_q({a=40,c=8,g=68})
+  return
+ end
  fill_q()
 end
 
