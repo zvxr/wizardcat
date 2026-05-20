@@ -13,7 +13,7 @@ iteration, simple patterns, clean implementation.
 ## Token strategy
 - Be mindful of the **8192 token limit**.
 - Prefer concise patterns over generic/expandable ones.
-- Organize project using multiple files, where pixiepixie.p8 is the entrance
+- Organize project using multiple files, where wizardcat.p8 is the entrance
   point (and uses include).
 
 ## PICO-8 specifics
@@ -43,6 +43,6 @@ iteration, simple patterns, clean implementation.
 
 ## Versioning
 - When asked to bump the version, increment `ver` in
-  `pixiepixie.p8`. Take note of all changes and summarize
+  `wizardcat.p8`. Take note of all changes and summarize
   as an entry in `CHANGELOG.md`. Keep concise and
   general. No need to get into deep details.

@@ -44,7 +44,7 @@ function _draw()
 end
 
 function _init()
-  cartdata("pixiepixie")
+  cartdata("wizardcat")
   init_h()
   init_w()
 end
