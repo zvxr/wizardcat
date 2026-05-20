@@ -99,6 +99,24 @@ function count_mt()
  return n
 end
 
+function would_m(p,x,y)
+ local fy=true
+ local fx=true
+ for i=1,9 do
+  if i!=x and empty_m(m[y][i]) then
+   fy=false
+   break
+  end
+ end
+ for i=1,9 do
+  if i!=y and empty_m(m[i][x]) then
+   fx=false
+   break
+  end
+ end
+ return fy or fx
+end
+
 function put_p()
  local qp=q[q.f]
  if qp.g==139 then
@@ -117,7 +135,7 @@ function put_p()
    next_lv()
    return
   end
-  put_i()
+ put_g()
   fill_q()
   return
  end
@@ -165,7 +183,7 @@ function put_p()
   next_lv()
   return
  end
- put_i(fy or fx)
+ put_g(fy or fx)
  fill_q()
 end
 

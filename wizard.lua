@@ -45,24 +45,25 @@ function init_w()
 end
 
 function get_wm(m)
+ if m==1 then return "show next" end
+ if m==2 then return "luck+" end
+ if m==3 then return "rainbow" end
+ if m==4 then return "discard+" end
+ if m==5 then return "recover+" end
+ if m==6 then return "luck+" end
+ if m==7 then return "near future" end
+ if m==8 then return "remove" end
+ if m==9 then return "discard+" end
+ if m==10 then return "far future" end
+ if m==11 then return "luck+" end
  if m==101 then return "welcome" end
  if m==102 then return "be careful..." end
  if m==103 then return "almost there" end
  if m==104 then return "select bonus" end
- if m==105 then return "show next" end
- if m==106 then return "luck+" end
- if m==107 then return "rainbow" end
- if m==108 then return "discard+" end
- if m==109 then return "recover+" end
- if m==110 then return "luck+" end
- if m==111 then return "near future" end
- if m==112 then return "remove" end
- if m==113 then return "discard+" end
- if m==114 then return "far future" end
- if m==115 then return "luck+" end
  if m==201 then return "I <3 minnows" end
  if m==202 then return "magic is cool" end
  if m==203 then return "meow" end
+ if m==204 then return "Luck: "..get_lk() end
 end
 
 function put_w(m,am)
@@ -71,7 +72,7 @@ function put_w(m,am)
 end
 
 function upd_w()
- if i and i.s>0 then
+ if g and g.s>0 then
   w.m=0
   w.am=0
  end
@@ -100,13 +101,15 @@ function upd_w()
   if w.am==0 then
    w.m=0
   end
- elseif w.m==0 and (not i or i.s<1) then
+ elseif w.m==0 and (not g or g.s<1) then
   if rnd(10000)<1 then
    put_w(201,60)
   elseif rnd(10000)<1 then
    put_w(202,60)
   elseif rnd(4000)<1 then
    put_w(203,60)
+  elseif rnd(4000)<1 then
+   put_w(204,60)
   end
  end
 end

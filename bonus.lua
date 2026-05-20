@@ -60,9 +60,9 @@ function get_bg(i)
 end
 
 function get_bm(i)
- if b.lv==5 then return 104+i end
- if b.lv==8 then return 109+i end
- return 112+i
+ if b.lv==5 then return i end
+ if b.lv==8 then return 5+i end
+ return 8+i
 end
 
 function get_bv()
@@ -159,11 +159,14 @@ function start_b()
  b.lv=lv
  b.on=1
  b.sel=1
- put_w(104,-1)
+ put_w(104,30)
 end
 
 function upd_b()
  local n=b.lv==5 and 5 or 3
+ if w.m==0 then
+  put_w(get_bm(b.sel),-1)
+ end
  if btnp(0) then
   b.sel-=1
   if b.sel<1 then b.sel=n end

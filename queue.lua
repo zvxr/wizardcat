@@ -15,7 +15,7 @@ end
 function discard_q()
  pop_q()
  fill_q()
- if rnd(100)<lk*((b.mo>0 and 1 or 0)+(b.ur>0 and 1 or 0)) then
+ if rnd(100)<get_lk()*((b.mo>0 and 1 or 0)+(b.ur>0 and 1 or 0)) then
   sfx(9)
  else
   q.d+=1
@@ -23,7 +23,7 @@ function discard_q()
    put_w(102,60)
   end
  end
- z_i()
+ step_g()
  sfx(6)
 end
 
@@ -64,6 +64,7 @@ function init_q()
   add_q({a=40,c=0,g=142})
   add_q({a=40,c=8,g=67})
   add_q({a=40,c=8,g=68})
+  add_q({a=40,c=14,g=73})
   return
  end
  fill_q()
@@ -78,7 +79,7 @@ function fill_q()
     end
   end
   for i=q.l-q.f+2,q.s do
-    if b.su>0 and rnd(100)<lk then
+    if b.su>0 and rnd(100)<get_lk() then
       add_q({a=40,c=0,g=139})
     else
       add_q(get_lp())

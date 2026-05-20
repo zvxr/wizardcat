@@ -6,6 +6,10 @@ function get_lc()
   return lv%4+1
 end
 
+function get_lk()
+ return lk
+end
+
 function has_bl()
  if lv==5 then
   return b.ea>0 or b.ma>0 or b.me>0 or b.mo>0 or b.ve>0
@@ -34,7 +38,7 @@ function load_g()
  init_m()
  init_q()
  init_s()
- init_i()
+ init_g()
  init_w()
  h.s=1
  h.x=0
@@ -50,7 +54,7 @@ function next_lv()
  init_q()
  init_s()
  init_t()
- init_i()
+ init_g()
  save_g()
  if lv==5 or lv==8 or lv==11 then
   start_b()
@@ -102,7 +106,7 @@ end
 
 function upd_input()
  if q.d>=3 then return end
- if use_i() then
+ if use_g() then
   return
  end
  if btnp(0) then
