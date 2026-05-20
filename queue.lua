@@ -15,7 +15,7 @@ end
 function discard_q()
  pop_q()
  fill_q()
- if rnd(100)<get_lk()*((b.mo>0 and 1 or 0)+(b.ur>0 and 1 or 0)) then
+ if rnd(100)<lk*((b.mo>0 and 1 or 0)+(b.ur>0 and 1 or 0)) then
   sfx(9)
  else
   q.d+=1
@@ -79,7 +79,7 @@ function fill_q()
     end
   end
   for i=q.l-q.f+2,q.s do
-    if b.su>0 and rnd(100)<get_lk() then
+    if b.su>0 and rnd(100)<lk then
       add_q({a=40,c=0,g=139})
     else
       add_q(get_lp())

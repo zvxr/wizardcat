@@ -18,7 +18,7 @@ Target table. Holds `x` and `y` tile coordinates.
 9x9 matrix of panel tables. Each panel uses `a` for animation ticks, `c` for panel color, and `g` for core graphic id.
 
 ### lk
-Luck integer. Set randomly to `1`, `2`, or `3` during game init. This is the stored current luck value, and gameplay should read it through `get_lk()`.
+Luck integer. Set randomly to `1`, `2`, or `3` during game init. Luck bonuses increase this directly when selected, and gameplay reads it directly.
 
 ### lv
 Current level integer. `get_lc()` maps this to a level color with `lv%4+1`.
@@ -92,16 +92,13 @@ Draws the wizard at tile coordinates `(9,12)` and `(9,13)`. Uses graphics `131/1
 Draws the main-screen wizard. Uses the same animation state as `draw_w()`, but at map-space positions `(21,12)`, `(21,13)`, and `(19,13)`, which render at screen pixels `(40,96)`, `(40,104)`, and `(24,104)`. If `w.m>0`, prints the current wizard message at tile `(21,11)`.
 
 ### discard_q()
-Discards the first queue panel, refills the queue, and plays sound `6`. Bonuses `mo` and `ur` each add `get_lk()` percent chance that any discard does not increase `q.d`, in which case sound `9` also plays. Their effects stack additively. Otherwise the discard count increases normally. When `q.d` reaches `2`, also shows wizard message `102`.
+Discards the first queue panel, refills the queue, and plays sound `6`. Bonuses `mo` and `ur` each add `lk` percent chance that any discard does not increase `q.d`, in which case sound `9` also plays. Their effects stack additively. Otherwise the discard count increases normally. When `q.d` reaches `2`, also shows wizard message `102`.
 
 ### empty_m(p)
 Returns true when matrix panel `p` is treated as empty. This includes blank panels with graphic `1`, cleared standard panels with graphics `112..127`, and cleared special panels `188..191`.
 
 ### get_lc()
 Returns the current level color from `lv`, looping through colors `1` to `4`.
-
-### get_lk()
-Returns the current effective luck value used by gameplay and wizard text.
 
 ### get_hp()
 Returns a random home-screen panel animation using `get_lp()`, but shifted into the cleared graphic range by adding `48` and starting animation at `1`.
@@ -113,7 +110,7 @@ Returns the default home-menu option from saved continue level. Returns `1` for 
 Returns a special first panel table with animation `40`. For levels `1` through `5`, returns `(0,142)`. From levels `6` through `9`, returns either `(0,141)` or `(0,142)` with equal chance. From level `10` onward, returns `(0,141)`, `(0,142)`, or `(0,143)` with equal chance.
 
 ### get_lp()
-Returns a new level panel table. Uses `get_lk()` as the percent chance to return `get_lfp()` instead. Otherwise sets animation to `40`, chooses panel color from a level-scaled range starting at `8..11` and adding one color every third level until `8..15`, and chooses graphic from a level-scaled range starting at `64..67` and growing on the non-color levels until `64..79`.
+Returns a new level panel table. Uses `lk` as the percent chance to return `get_lfp()` instead. Otherwise sets animation to `40`, chooses panel color from a level-scaled range starting at `8..11` and adding one color every third level until `8..15`, and chooses graphic from a level-scaled range starting at `64..67` and growing on the non-color levels until `64..79`.
 
 ### get_bg(i)
 Returns the current level's bonus graphic for selection index `i`.
@@ -125,13 +122,13 @@ Returns the current level's persistent wizard message id for selection index `i`
 Returns the current bonus selections as a bitmask integer for PICO-8 cart storage.
 
 ### get_wm(m)
-Returns wizard message text for message id `m`. Persistent ids `1..99` are system text, triggered ids `100..199` are timed events, and random ids `200+` are chatter. Current ids include `1` for `show next`, `2` for `luck+`, `3` for `rainbow`, `4` for `discard+`, `5` for `recover+`, `6` for `luck+`, `7` for `near future`, `8` for `remove`, `9` for `discard+`, `10` for `far future`, `11` for `luck+`, `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `104` for `select bonus`, `201` for `I <3 minnows`, `202` for `magic is cool`, `203` for `meow`, and `204` for `Luck: {get_lk()}`.
+Returns wizard message text for message id `m`. Persistent ids `1..99` are system text, triggered ids `100..199` are timed events, and random ids `200+` are chatter. Current ids include `1` for `show next`, `2` for `luck+`, `3` for `rainbow`, `4` for `discard+`, `5` for `recover+`, `6` for `luck+`, `7` for `near future`, `8` for `remove`, `9` for `discard+`, `10` for `far future`, `11` for `luck+`, `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `104` for `select bonus`, `201` for `I <3 minnows`, `202` for `magic is cool`, `203` for `meow`, and `204` for `Luck: {lk}`.
 
 ### fin_g()
 Checks whether the current queue panel has at least one valid placement that would complete a row.
 
 ### init_game()
-Initializes luck and level state from input level `l`.
+Initializes level state from input level `l`. Sets base luck to input `n` when provided and positive; otherwise randomizes base luck to `1..3`.
 
 ### init_b()
 Initializes the bonus table with no owned level-5 bonuses and selection state cleared.
@@ -140,7 +137,7 @@ Initializes the bonus table with no owned level-5 bonuses and selection state cl
 Loads owned bonus flags from bitmask integer `v`.
 
 ### load_g()
-Loads saved level and bonus state from PICO-8 cart storage, reinitializes gameplay systems, and starts play mode. If the loaded level is a bonus-selection level with no bonus chosen for that tier yet, it enters `start_b()`.
+Loads saved level, bonus state, and luck from PICO-8 cart storage, reinitializes gameplay systems, and starts play mode. If the loaded level is a bonus-selection level with no bonus chosen for that tier yet, it enters `start_b()`.
 
 ### init_h()
 Initializes the home table with game-over animation delay `0`, default option from `get_ho()`, an empty random panel animation, home-panel odds `0`, screen state `0`, and game-over press count `0`.
@@ -170,10 +167,10 @@ Appends panel `p` to the back of the queue.
 Clears queued panel references in place, then resets first index to `1` and last index to `0`. Keeps the existing queue size setting in `q.s`.
 
 ### fill_q()
-Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` first, unless bonus `ea` is active, in which case it adds graphic `140` instead. Then fills remaining slots with `get_lp()`, unless bonus `su` is active and a raw `get_lk()` percent roll replaces that panel with graphic `139`. Uses the live count `q.l-q.f+1`, so refills continue to work after pops.
+Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` first, unless bonus `ea` is active, in which case it adds graphic `140` instead. Then fills remaining slots with `get_lp()`, unless bonus `su` is active and a raw `lk` percent roll replaces that panel with graphic `139`. Uses the live count `q.l-q.f+1`, so refills continue to work after pops.
 
 ### pick_b()
-Applies the currently selected bonus for the current bonus level, clears bonus-select mode, and clears the wizard message. Luck bonuses `ve`, `ju`, and `pl` each immediately add `1..3` to `lk`. Bonus `ea` also immediately replaces the current first queue panel with graphic `140`. Bonus `ne` immediately raises queue size to `4` and refills it.
+Applies the currently selected bonus for the current bonus level, clears bonus-select mode, and clears the wizard message. Luck bonuses `ve`, `ju`, and `pl` each immediately add a random `1..3` to `lk`. Bonus `ea` also immediately replaces the current first queue panel with graphic `140`. Bonus `ne` immediately raises queue size to `4` and refills it.
 
 ### pick_h()
 Applies the selected home-menu option. `normal` starts gameplay at level `4` and clears saved progress, `easy` starts at level `1` and clears saved progress, and `continue` loads the saved level and bonus state from PICO-8 cart storage.
@@ -200,10 +197,10 @@ Returns to the home screen. Resets the home selection to `get_ho()`, clears the 
 Checks whether the current level's bonus slot has already been chosen. Returns true for non-bonus levels.
 
 ### reset_g(l)
-Clears saved bonus state, stores level `l` into PICO-8 cart storage, and starts a fresh game from that level.
+Clears saved bonus state and saved luck, stores level `l` into PICO-8 cart storage, and starts a fresh game from that level.
 
 ### save_g()
-Stores the current bonus bitmask and the current level capped to `12` into PICO-8 cart storage.
+Stores the current level capped to `12`, current bonus bitmask, and current luck into PICO-8 cart storage.
 
 ### move_t(x,y)
 Moves the target by one cell in direction `(x,y)`, applying the normal bounds checks and movement sounds.

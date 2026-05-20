@@ -63,7 +63,7 @@ function get_wm(m)
  if m==201 then return "I <3 minnows" end
  if m==202 then return "magic is cool" end
  if m==203 then return "meow" end
- if m==204 then return "Luck: "..get_lk() end
+ if m==204 then return "Luck: "..lk end
 end
 
 function put_w(m,am)

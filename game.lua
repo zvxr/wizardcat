@@ -6,10 +6,6 @@ function get_lc()
   return lv%4+1
 end
 
-function get_lk()
- return lk
-end
-
 function has_bl()
  if lv==5 then
   return b.ea>0 or b.ma>0 or b.me>0 or b.mo>0 or b.ve>0
@@ -23,17 +19,18 @@ function has_bl()
  return true
 end
 
-function init_game(l)
-  lk=1+flr(rnd(3))
+function init_game(l,n)
+  lk=n and n>0 and n or 1+flr(rnd(3))
   lv=l
 end
 
 function load_g()
  local l=flr(dget(0))
+ local n=flr(dget(2))
  if l<1 then l=4 end
  init_b()
  load_b(flr(dget(1)))
- init_game(l)
+ init_game(l,n)
  init_t()
  init_m()
  init_q()
@@ -64,12 +61,14 @@ end
 function reset_g(l)
  dset(0,l)
  dset(1,0)
+  dset(2,0)
  start_g(l)
 end
 
 function save_g()
  dset(0,min(lv,12))
  dset(1,get_bv())
+ dset(2,lk)
 end
 
 function move_t(x,y)
