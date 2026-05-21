@@ -1,5 +1,4 @@
 function draw_b()
- local g
  pal(8,b.me>0 and 11 or 3)
  spr(10,32,48)
  pal()
@@ -35,22 +34,22 @@ function draw_b()
   spr(152,112,112)
  end
  if b.on>0 then
-  g=get_bg(b.sel)
+  local bg=get_bg(b.sel)
   if b.l==5 then
-   spr(g,80,112)
+   spr(bg,80,112)
   elseif b.l==8 then
-   draw_bb(g,96,96)
+   draw_bb(bg,96,96)
   else
-   spr(g,112,112)
+   spr(bg,112,112)
   end
  end
 end
 
-function draw_bb(g,x,y)
- spr(g,x,y)
- spr(g+1,x+8,y)
- spr(g+16,x,y+8)
- spr(g+17,x+8,y+8)
+function draw_bb(bg,x,y)
+ spr(bg,x,y)
+ spr(bg+1,x+8,y)
+ spr(bg+16,x,y+8)
+ spr(bg+17,x+8,y+8)
 end
 
 function get_bg(i)

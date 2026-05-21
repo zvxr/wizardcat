@@ -163,9 +163,6 @@ Initializes the wizard table with animations `0`, idle odds `0`, and startup mes
 ### add_q(p)
 Appends panel `p` to the back of the queue.
 
-### clear_q()
-Clears queued panel references in place, then resets first index to `1` and last index to `0`. Keeps the existing queue size setting in `q.s`.
-
 ### fill_q()
 Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` first, unless bonus `ea` is active, in which case it adds graphic `140` instead. Then fills remaining slots with `get_lp()`, unless bonus `su` is active and a raw `lk` percent roll replaces that panel with graphic `139`. Uses the live count `q.l-q.f+1`, so refills continue to work after pops.
 

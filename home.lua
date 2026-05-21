@@ -47,9 +47,9 @@ function get_hp()
 end
 
 function get_ho()
- local l=flr(dget(0))
- if l==1 then return 2 end
- if l>1 and l!=4 then return 3 end
+ local sl=flr(dget(0))
+ if sl==1 then return 2 end
+ if sl>1 and sl!=4 then return 3 end
  return 1
 end
 

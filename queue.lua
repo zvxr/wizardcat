@@ -3,15 +3,6 @@ function add_q(p)
  q[q.l]=p
 end
 
-function clear_q()
- local l=q.l
- for i=q.f,l do
-  q[i]=nil
- end
- q.f=1
- q.l=0
-end
-
 function discard_q()
  pop_q()
  fill_q()
@@ -78,7 +69,7 @@ function fill_q()
       add_q(get_lfp())
     end
   end
-  for i=q.l-q.f+2,q.s do
+  while q.l-q.f+1<q.s do
     if b.su>0 and rnd(100)<lk then
       add_q({a=40,c=0,g=139})
     else

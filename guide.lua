@@ -11,66 +11,66 @@ end
 
 function draw_g()
  if g.s<1 then return end
- local b=g.a\15%2==0
- local s=g.s
- if s==1 then
+ local bl=g.a\15%2==0
+ local gs=g.s
+ if gs==1 then
   print("Place panels",72,88,7)
   print("with X key",72,94,7)
-  if b then
+  if bl then
    spr(12,13*8,14*8)
   end
- elseif s==2 then
+ elseif gs==2 then
   print("Navigate with",72,88,7)
   print("arrow keys",72,94,7)
-  if b then
+  if bl then
    spr(4,10*8,1*8)
    spr(5,10*8,9*8)
    spr(3,6*8,5*8)
    spr(6,14*8,5*8)
   end
- elseif s==3 then
+ elseif gs==3 then
   print("Next panel",72,88,7)
   print("is here",72,94,7)
-  if b then
+  if bl then
    spr(3,4*8,3*8)
   end
- elseif s==4 then
+ elseif gs==4 then
   print("Wild matches",72,88,7)
   print("color",72,94,7)
-  if b then
+  if bl then
    spr(11,10*8,4*8)
    spr(11,11*8,5*8)
    spr(11,9*8,5*8)
    spr(11,10*8,6*8)
   end
- elseif s==5 then
+ elseif gs==5 then
   print("Wild matches",72,88,7)
   print("color",72,94,7)
- elseif s==6 or s==7 or s==8 then
+ elseif gs==6 or gs==7 or gs==8 then
   print("Match color",72,88,7)
   print("or shape",72,94,7)
- elseif s==61 then
+ elseif gs==61 then
   print("Discard",72,88,7)
   print("with Z key",72,94,7)
-  if b then
+  if bl then
    spr(13,13*8,14*8)
   end
- elseif s==71 then
+ elseif gs==71 then
   print("Recover by",72,88,7)
   print("placing panels",72,94,7)
- elseif s==81 then
+ elseif gs==81 then
   print("Finish row",72,88,7)
   print("to make space",72,94,7)
- elseif s==9 then
+ elseif gs==9 then
   print("Change all",72,88,7)
   print("panels to win",72,94,7)
  end
- if b and s==81 then
+ if bl and gs==81 then
   local x,y=where_g()
   if x then
    spr(11,(x+5)*8,y*8)
   end
- elseif b and (s==5 or s==6 or s==61 or s==7 or s==71 or s==8) then
+ elseif bl and (gs==5 or gs==6 or gs==61 or gs==7 or gs==71 or gs==8) then
   local p=q[q.f]
   for y=1,9 do
    for x=1,9 do

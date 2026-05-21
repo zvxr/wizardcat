@@ -44,30 +44,30 @@ function init_w()
  w={a=0,ae=0,am=60,m=101,o=0,oe=0}
 end
 
-function get_wm(m)
- if m==1 then return "show next" end
- if m==2 then return "luck+" end
- if m==3 then return "rainbow" end
- if m==4 then return "discard+" end
- if m==5 then return "recover+" end
- if m==6 then return "luck+" end
- if m==7 then return "near future" end
- if m==8 then return "remove" end
- if m==9 then return "discard+" end
- if m==10 then return "far future" end
- if m==11 then return "luck+" end
- if m==101 then return "welcome" end
- if m==102 then return "be careful..." end
- if m==103 then return "almost there" end
- if m==104 then return "select bonus" end
- if m==201 then return "I <3 minnows" end
- if m==202 then return "magic is cool" end
- if m==203 then return "meow" end
- if m==204 then return "Luck: "..lk end
+function get_wm(id)
+ if id==1 then return "show next" end
+ if id==2 then return "luck+" end
+ if id==3 then return "rainbow" end
+ if id==4 then return "discard+" end
+ if id==5 then return "recover+" end
+ if id==6 then return "luck+" end
+ if id==7 then return "near future" end
+ if id==8 then return "remove" end
+ if id==9 then return "discard+" end
+ if id==10 then return "far future" end
+ if id==11 then return "luck+" end
+ if id==101 then return "welcome" end
+ if id==102 then return "be careful..." end
+ if id==103 then return "almost there" end
+ if id==104 then return "select bonus" end
+ if id==201 then return "I <3 minnows" end
+ if id==202 then return "magic is cool" end
+ if id==203 then return "meow" end
+ if id==204 then return "Luck: "..lk end
 end
 
-function put_w(m,am)
- w.m=m
+function put_w(id,am)
+ w.m=id
  w.am=am
 end
 
