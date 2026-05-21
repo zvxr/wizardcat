@@ -4,7 +4,7 @@ __lua__
 
 #include target.lua
 #include bonus.lua
-#include game.lua
+#include level.lua
 #include home.lua
 #include matrix.lua
 #include panel.lua
@@ -17,12 +17,12 @@ b=nil
 h=nil
 g=nil
 lk=0
-lv=0
+l=0
 m=nil
 q=nil
 s=nil
 t=nil
-ver = "2026.alpha1"
+ver = "26.beta"
 w=nil
 
 function _draw()
@@ -34,7 +34,7 @@ function _draw()
   cls()
   map()
   draw_b()
-  draw_lv()
+  draw_l()
   draw_m(get_lc())
   draw_s()
   draw_t()
@@ -74,6 +74,24 @@ function _update()
     end
   end
   upd_w()
+end
+
+function upd_input()
+ if q.d>=3 then return end
+ if use_g() then return end
+ if btnp(0) then
+  move_t(-1,0)
+ elseif btnp(1) then
+  move_t(1,0)
+ elseif btnp(2) then
+  move_t(0,-1)
+ elseif btnp(3) then
+  move_t(0,1)
+ elseif btnp(4) then
+  discard_q()
+ elseif btnp(5) then
+  put_p()
+ end
 end
 
 __gfx__
@@ -223,4 +241,3 @@ __sfx__
 __music__
 03 0a0b4344
 01 41424344
-

@@ -132,7 +132,7 @@ function put_p()
   end
   sfx(4)
   if check_mt() then
-   next_lv()
+   put_l()
    return
   end
  put_g()
@@ -180,7 +180,7 @@ function put_p()
  end
  sfx(4)
  if check_mt() then
-  next_lv()
+   put_l()
   return
  end
  put_g(fy or fx)

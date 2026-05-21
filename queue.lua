@@ -60,7 +60,7 @@ function init_q()
   l=0,
   s=b.ne>0 and 4 or 3
  }
- if lv==1 then
+ if l==1 then
   add_q({a=40,c=0,g=142})
   add_q({a=40,c=8,g=67})
   add_q({a=40,c=8,g=68})

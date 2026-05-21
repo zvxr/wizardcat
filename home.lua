@@ -5,6 +5,7 @@ function draw_h()
  print("normal",40,56,h.o==1 and 11 or 7)
  print("easy",40,64,h.o==2 and 11 or 7)
  print("continue",40,72,h.o==3 and 11 or 7)
+ print(ver,96,112,7)
 end
 
 function draw_hg()
@@ -20,7 +21,7 @@ function draw_hg()
  rect(28,54,100,80,7)
  print("game over",46,56,7)
  print("continue on",38,68,5)
- print("level "..min(lv,12),38,74,5)
+ print("level "..min(l,12),38,74,5)
 end
 
 function draw_hp()
@@ -58,27 +59,12 @@ end
 
 function pick_h()
  if h.o==1 then
-  reset_g(4)
+  init_l(4)
  elseif h.o==2 then
-  reset_g(1)
+  init_l(1)
  else
-  load_g()
+  init_l(0)
  end
-end
-
-function start_g(l)
- init_b()
- init_game(l)
- init_t()
- init_m()
- init_q()
- init_s()
- init_g()
- init_w()
- h.s=1
- h.a=0
- h.x=0
- save_g()
 end
 
 function start_h()

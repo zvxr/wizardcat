@@ -99,7 +99,7 @@ function where_g()
 end
 
 function init_g()
- g={a=0,k=0,s=lv==1 and 1 or 0,t=0}
+ g={a=0,k=0,s=l==1 and 1 or 0,t=0}
  if w then
   w.m=0
   w.am=0

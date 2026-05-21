@@ -3,8 +3,37 @@ function draw_t()
 end
 
 function init_t()
-  t={
-    x=5,  -- x coord
-    y=5   -- y coord
-  }
+ t={x=5,y=5}
+end
+
+function move_t(x,y)
+ if x<0 then
+  if t.x>1 then
+   t.x-=1
+   sfx(3)
+  else
+   sfx(1)
+  end
+ elseif x>0 then
+  if t.x<9 then
+   t.x+=1
+   sfx(3)
+  else
+   sfx(1)
+  end
+ elseif y<0 then
+  if t.y>1 then
+   t.y-=1
+   sfx(3)
+  else
+   sfx(1)
+  end
+ elseif y>0 then
+  if t.y<9 then
+   t.y+=1
+   sfx(3)
+  else
+   sfx(1)
+  end
+ end
 end

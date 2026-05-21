@@ -38,18 +38,18 @@ function draw_p(lc,p,x,y)
 end
 
 function get_lfp()
- if lv<6 then
+ if l<6 then
   return {a=40,c=0,g=142}
  end
- return {a=40,c=0,g=141+flr(rnd(lv<10 and 2 or 3))}
+ return {a=40,c=0,g=141+flr(rnd(l<10 and 2 or 3))}
 end
 
 function get_lp()
  if rnd(100)<lk then
   return get_lfp()
  end
- local cn=min(8,4+flr(lv/3))
- local gn=min(16,3+lv-flr(lv/3))
+ local cn=min(8,4+flr(l/3))
+ local gn=min(16,3+l-flr(l/3))
  return {
   a=40,
   c=8+flr(rnd(cn)),

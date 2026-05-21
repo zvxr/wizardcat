@@ -36,9 +36,9 @@ function draw_b()
  end
  if b.on>0 then
   g=get_bg(b.sel)
-  if b.lv==5 then
+  if b.l==5 then
    spr(g,80,112)
-  elseif b.lv==8 then
+  elseif b.l==8 then
    draw_bb(g,96,96)
   else
    spr(g,112,112)
@@ -54,14 +54,14 @@ function draw_bb(g,x,y)
 end
 
 function get_bg(i)
- if b.lv==5 then return 133+i end
- if b.lv==8 then return 163+i*2 end
+ if b.l==5 then return 133+i end
+ if b.l==8 then return 163+i*2 end
  return 149+i
 end
 
 function get_bm(i)
- if b.lv==5 then return i end
- if b.lv==8 then return 5+i end
+ if b.l==5 then return i end
+ if b.l==8 then return 5+i end
  return 8+i
 end
 
@@ -85,7 +85,7 @@ function init_b()
  b={
   ea=0,
   ju=0,
-  lv=0,
+  l=0,
   ma=0,
   me=0,
   mo=0,
@@ -115,7 +115,7 @@ function load_b(v)
 end
 
 function pick_b()
- if b.lv==5 then
+ if b.l==5 then
   if b.sel==1 then
    b.me=1
   elseif b.sel==2 then
@@ -129,7 +129,7 @@ function pick_b()
   else
    b.ma=1
   end
- elseif b.lv==8 then
+ elseif b.l==8 then
   if b.sel==1 then
    b.ju=1
    lk+=1+flr(rnd(3))
@@ -152,18 +152,18 @@ function pick_b()
  end
  b.on=0
  put_w(0,0)
- save_g()
+ save_l()
 end
 
 function start_b()
- b.lv=lv
+ b.l=l
  b.on=1
  b.sel=1
  put_w(104,30)
 end
 
 function upd_b()
- local n=b.lv==5 and 5 or 3
+ local n=b.l==5 and 5 or 3
  if w.m==0 then
   put_w(get_bm(b.sel),-1)
  end
