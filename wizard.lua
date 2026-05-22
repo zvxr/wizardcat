@@ -1,4 +1,13 @@
 function draw_w()
+ if l>=16 then
+  local fg=198+(w.ab\18)%4*2
+  spr(fg,88,104)
+  spr(fg+1,96,104)
+  spr(fg+16,88,112)
+  spr(fg+17,96,112)
+  spr(fg+32,88,120)
+  spr(fg+33,96,120)
+ end
  if w.a<0 then
   spr(132,72,96)
   spr(148,72,104)
@@ -41,19 +50,19 @@ function draw_wm()
 end
 
 function init_w()
- w={a=0,ae=0,am=60,m=101,o=0,oe=0}
+ w={a=0,ab=0,ae=0,am=60,m=101,o=0,oe=0}
 end
 
 function get_wm(id)
  if id==1 then return "show next" end
  if id==2 then return "luck+" end
  if id==3 then return "rainbow" end
- if id==4 then return "discard+" end
+ if id==4 then return "trash luck" end
  if id==5 then return "recover+" end
  if id==6 then return "luck+" end
  if id==7 then return "near future" end
  if id==8 then return "remove" end
- if id==9 then return "discard+" end
+ if id==9 then return "trash luck" end
  if id==10 then return "far future" end
  if id==11 then return "luck+" end
  if id==101 then return "welcome" end
@@ -72,6 +81,11 @@ function put_w(id,am)
 end
 
 function upd_w()
+ if l>=16 then
+  w.ab=(w.ab+1)%72
+ else
+  w.ab=0
+ end
  if g and g.s>0 then
   w.m=0
   w.am=0

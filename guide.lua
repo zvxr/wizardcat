@@ -15,7 +15,7 @@ function draw_g()
  local gs=g.s
  if gs==1 then
   print("Place panels",72,88,7)
-  print("with X key",72,94,7)
+  print(" with x key",72,94,7)
   if bl then
    spr(12,13*8,14*8)
   end
@@ -50,8 +50,8 @@ function draw_g()
   print("Match color",72,88,7)
   print("or shape",72,94,7)
  elseif gs==61 then
-  print("Discard",72,88,7)
-  print("with Z key",72,94,7)
+  print("trash panel",72,88,7)
+  print("with z key",72,94,7)
   if bl then
    spr(13,13*8,14*8)
   end

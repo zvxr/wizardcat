@@ -27,7 +27,7 @@ Current level integer. `get_lc()` maps this to a level color with `l%4+1`.
 Level-global continue table. Holds session continue state loaded from cart storage at boot, then updated from the current run: `b` for saved bonus bitmask, `k` for saved luck, and `l` for saved level capped to `12`.
 
 ### q
-Queue table. Holds `d` for discard count, `f` for first index, `l` for last index, and `s` for target size.
+Queue table. Holds `d` for trash count, `f` for first index, `l` for last index, and `s` for target size.
 
 ### s
 Staff table. Holds `a` for staff animation timing, `o` for idle animation odds growth, and `t` for whether the 80%-full wizard message has already been shown this level.
@@ -36,7 +36,7 @@ Staff table. Holds `a` for staff animation timing, `o` for idle animation odds g
 Cart version string.
 
 ### w
-Wizard table. Holds signed animation `a`, extra animation `ae`, message timer `am`, message id `m`, and idle odds `o` and `oe`.
+Wizard table. Holds signed animation `a`, level-12+ bonus animation timer `ab`, extra animation `ae`, message timer `am`, message id `m`, and idle odds `o` and `oe`.
 
 ## Functions
 
@@ -83,19 +83,19 @@ Counts touched matrix panels. Returns the number of cells whose graphic is not `
 Checks whether placing panel `p` at matrix coordinate `(x,y)` would complete either the full row or the full column at that position. Returns true when all other cells in that row or column are already non-empty.
 
 ### draw_q()
-Draws the first live queue panel at tile coordinate `(2,3)`. Uses the normal panel draw path with level color `0`, so sprite color `5` is remapped to `0` and sprite color `6` is remapped to the panel color. When bonus `me` is active, also draws `q[1]` at tile `(4,5)`. When bonus `sa` is active, draws `q[2]` at tile `(4,8)`. When bonus `ne` is active, draws `q[3]` at tile `(4,11)`. Also draws the discard indicator at `(2,2)` using graphics `17`, `19`, or `20`, and when discards reach `3` draws a 2x2 game-over marker using graphics `35`, `36`, `51`, and `52`.
+Draws the first live queue panel at tile coordinate `(2,3)`. Uses the normal panel draw path with level color `0`, so sprite color `5` is remapped to `0` and sprite color `6` is remapped to the panel color. When bonus `me` is active, also draws `q[1]` at tile `(4,5)`. When bonus `sa` is active, draws `q[2]` at tile `(4,8)`. When bonus `ne` is active, draws `q[3]` at tile `(4,11)`. Also draws the trash indicator at `(2,2)` using graphics `17`, `19`, or `20`, and when trashes reach `3` draws a 2x2 game-over marker using graphics `35`, `36`, `51`, and `52`.
 
 ### draw_s()
 Draws the full level-progress staff. Uses touched matrix count mapped proportionally from `0..81` into `0..28` visual fill steps. The base uses graphic `22` at `(2,14)`, and the upper shaft procedurally cycles graphics `56`, `40`, and `24` upward while recoloring filled colors to the current level color and unfilled colors to `0`. On graphic `24`, animation graphics `25..29` are only drawn when the third fill layer is active and `s.a` is running.
 
 ### draw_w()
-Draws the wizard at tile coordinates `(9,12)` and `(9,13)`. Uses graphics `131/147` when `w.a==0`, `132/148` when `w.a<0`, and `133/149` when `w.a>0`. Also draws graphic `145` at `(7,13)` when `w.ae==0` and graphic `164` when `w.ae>0`. If `w.m>0`, prints the current wizard message at tile `(9,11)`.
+Draws the wizard at tile coordinates `(9,12)` and `(9,13)`. Uses graphics `131/147` when `w.a==0`, `132/148` when `w.a<0`, and `133/149` when `w.a>0`. Also draws graphic `145` at `(7,13)` when `w.ae==0` and graphic `164` when `w.ae>0`. At level `16+`, also draws a 2x3 animated block at top-left tile `(11,13)`, cycling frames `198/199/214/215/230/231`, `200/201/216/217/232/233`, `202/203/218/219/234/235`, and `204/205/220/221/236/237` every `18` ticks. If `w.m>0`, prints the current wizard message at tile `(9,11)`.
 
 ### draw_wm()
 Draws the main-screen wizard. Uses the same animation state as `draw_w()`, but at map-space positions `(21,12)`, `(21,13)`, and `(19,13)`, which render at screen pixels `(40,96)`, `(40,104)`, and `(24,104)`. If `w.m>0`, prints the current wizard message at tile `(21,11)`.
 
 ### discard_q()
-Discards the first queue panel, refills the queue, and plays sound `6`. Bonuses `mo` and `ur` each add `lk` percent chance that any discard does not increase `q.d`, in which case sound `9` also plays. Their effects stack additively. Otherwise the discard count increases normally. When `q.d` reaches `2`, also shows wizard message `102`.
+Trashes the first queue panel, refills the queue, and plays sound `6`. Bonuses `mo` and `ur` each add `lk` percent chance that any trash does not increase `q.d`, in which case sound `9` also plays. Their effects stack additively. Otherwise the trash count increases normally. When `q.d` reaches `2`, also shows wizard message `102`.
 
 ### empty_m(p)
 Returns true when matrix panel `p` is treated as empty. This includes blank panels with graphic `1`, cleared standard panels with graphics `112..127`, and cleared special panels `188..191`.
@@ -125,7 +125,7 @@ Returns the current level's persistent wizard message id for selection index `i`
 Returns the current bonus selections as a bitmask integer for PICO-8 cart storage.
 
 ### get_wm(m)
-Returns wizard message text for message id `m`. Persistent ids `1..99` are system text, triggered ids `100..199` are timed events, and random ids `200+` are chatter. Current ids include `1` for `show next`, `2` for `luck+`, `3` for `rainbow`, `4` for `discard+`, `5` for `recover+`, `6` for `luck+`, `7` for `near future`, `8` for `remove`, `9` for `discard+`, `10` for `far future`, `11` for `luck+`, `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `104` for `select bonus`, `201` for `I <3 minnows`, `202` for `magic is cool`, `203` for `meow`, and `204` for `Luck: {lk}`.
+Returns wizard message text for message id `m`. Persistent ids `1..99` are system text, triggered ids `100..199` are timed events, and random ids `200+` are chatter. Current ids include `1` for `show next`, `2` for `luck+`, `3` for `rainbow`, `4` for `trash luck`, `5` for `recover+`, `6` for `luck+`, `7` for `near future`, `8` for `remove`, `9` for `trash luck`, `10` for `far future`, `11` for `luck+`, `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `104` for `select bonus`, `201` for `I <3 minnows`, `202` for `magic is cool`, `203` for `meow`, and `204` for `Luck: {lk}`.
 
 ### fin_g()
 Checks whether the current queue panel has at least one valid placement that would complete a row.
@@ -158,13 +158,13 @@ Initializes the target table with starting coordinates.
 Replaces the global matrix with a new 9x9 panel array. Looks up the current level color with `get_lc()`. Each panel starts as graphic `1`, color `lc`, animation `40`.
 
 ### init_q()
-Initializes the queue table with discard count `0`, first index `1`, last index `0`, and target size `3`, or `4` when bonus `ne` is active. At level `1`, preloads the queue with special panel `142`, then normal panels `(8,67)` and `(8,68)`, then forced dead panel `(14,73)` so the discard lesson is guaranteed.
+Initializes the queue table with trash count `0`, first index `1`, last index `0`, and target size `3`, or `4` when bonus `ne` is active. At level `1`, preloads the queue with special panel `142`, then normal panels `(8,67)` and `(8,68)`, then forced dead panel `(14,73)` so the trash lesson is guaranteed.
 
 ### init_s()
 Initializes the staff table with animation `0`, odds `0`, and threshold-message flag `0`.
 
 ### init_w()
-Initializes the wizard table with animations `0`, idle odds `0`, and startup message `101` for `60` frames.
+Initializes the wizard table with animations `0`, level-12+ bonus animation timer `0`, idle odds `0`, and startup message `101` for `60` frames.
 
 ### add_q(p)
 Appends panel `p` to the back of the queue.
@@ -182,7 +182,7 @@ Applies the selected home-menu option. `easy` starts gameplay at level `1`, `nor
 Returns and removes the first panel in the queue. Returns nothing if the queue is empty.
 
 ### put_p()
-Attempts to place the first queue panel on the matrix cell under the target. Placement normally succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. Graphic `139` instead places onto any non-empty panel, immediately clears that panel by adding `48` to its graphic and setting animation to `40`, then refills the queue. Normal successful placement replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one discard from `q.d` until it reaches `0`, or two when bonus `ma` is active, plays sound `7` if a row or column was completed, plays sound `4`, then immediately advances with `put_l()` if `check_mt()` passes. Otherwise it refills the queue with `fill_q()`. On failure, plays sound `5` and returns.
+Attempts to place the first queue panel on the matrix cell under the target. Placement normally succeeds only when the target matrix panel is treated as empty and `check_m()` passes for the queued panel against all in-bounds neighbors. Graphic `139` instead places onto any non-empty panel, immediately clears that panel by adding `48` to its graphic and setting animation to `40`, then refills the queue. Normal successful placement replaces the matrix panel with `pop_q()`, then checks the full target row and column. Any completed row or column is marked cleared by adding `48` to each panel graphic and resetting animation to `40`. Successful placement also recovers one trash from `q.d` until it reaches `0`, or two when bonus `ma` is active, plays sound `7` if a row or column was completed, plays sound `4`, then immediately advances with `put_l()` if `check_mt()` passes. Otherwise it refills the queue with `fill_q()`. On failure, plays sound `5` and returns.
 
 ### put_w(m,am)
 Replaces the current wizard message with id `m` and timer `am`.
@@ -200,7 +200,7 @@ Stores the current level capped to `12`, current bonus bitmask, and current luck
 Moves the target by one cell in direction `(x,y)`, applying the normal bounds checks and movement sounds.
 
 ### upd_input()
-Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` discards the first queue panel with `discard_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.d` reaches `3`, input stops until the cart is restarted.
+Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` trashes the first queue panel with `discard_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.d` reaches `3`, input stops until the cart is restarted.
 
 ### upd_b()
 Handles bonus selection input while `b.on` is active. Once the short `select bonus` prompt clears, it restores the current option description persistently using `get_bm()`. Left and right cycle through the current level's bonus options with wrapping and replace the wizard message using `get_bm()`. Level `5` has five options; levels `8` and `11` have three each. Button `5` confirms the current selection with `pick_b()`.
@@ -221,13 +221,13 @@ Reduces the animation counter of each live queue panel by `1` until it reaches `
 Reduces the staff animation counter by `1` until it reaches `0`. When `a` is `0`, uses chance `rnd(3000)<1+s.o` to start a new animation at `24` and reset `o` to `0`; otherwise increments `o` by `1`. When touched count reaches `64` or more for the first time in a level, shows wizard message `103` and marks the threshold flag.
 
 ### upd_w()
-Moves the wizard animation values toward `0` by `1` each update. When `w.a` is `0`, uses chance `rnd(5000)<1+w.o` to set `w.a` to either `-55` or `55` with equal chance and reset `w.o` to `0`; otherwise increments `w.o` by `1`. When `w.ae` is `0`, uses chance `rnd(10000)<1+w.oe` to set `w.ae` to `24` and reset `w.oe` to `0`; otherwise increments `w.oe` by `1`. Timed messages count `w.am` down to `0`, then clear `w.m`. While the level-1 guide is active, wizard messages are cleared and random chatter is suppressed. Otherwise, when no message is active, random ids `201` and `202` can appear with `1/10000` chance each and ids `203` and `204` can appear with `1/4000` chance.
+Moves the wizard animation values toward `0` by `1` each update. At level `16+`, advances `w.ab` modulo `72` so the 2x3 block animation changes frame every `18` ticks; below level `16`, resets `w.ab` to `0`. When `w.a` is `0`, uses chance `rnd(5000)<1+w.o` to set `w.a` to either `-55` or `55` with equal chance and reset `w.o` to `0`; otherwise increments `w.o` by `1`. When `w.ae` is `0`, uses chance `rnd(10000)<1+w.oe` to set `w.ae` to `24` and reset `w.oe` to `0`; otherwise increments `w.oe` by `1`. Timed messages count `w.am` down to `0`, then clear `w.m`. While the level-1 guide is active, wizard messages are cleared and random chatter is suppressed. Otherwise, when no message is active, random ids `201` and `202` can appear with `1/10000` chance each and ids `203` and `204` can appear with `1/4000` chance.
 ### guide.lua
 
 - `g`: guide state. `a` is the blink timer, `k` is the arrow-key count, `s` is the current guide stage, and `t` is the hold timer.
 
 - `can_g()`: Returns whether the current queue panel can be placed anywhere on the matrix under normal placement rules.
-- `draw_g()`: Draws the level-1 guide text and helper sprites under the wizard text area. The initial place step blinks graphic `12` at `(13,14)`, the discard step blinks graphic `13` at `(13,14)`, and the row-finish step blinks only the exact finishing cell from `where_g()`.
+- `draw_g()`: Draws the level-1 guide text and helper sprites under the wizard text area. The initial place step blinks graphic `12` at `(13,14)`, the trash step blinks graphic `13` at `(13,14)`, and the row-finish step blinks only the exact finishing cell from `where_g()`.
 - `fin_g()`: Returns whether `where_g()` found any legal placement that would complete a row or column.
 - `init_g()`: Initializes level-1 guide state as `g={a=0,k=0,s=l==1 and 1 or 0,t=0}` and clears wizard text while guide mode is active.
 - `put_g(r)`: Advances the guide after successful placements. If `r` is truthy, the placement finished a row or column and can advance the late guide state.
