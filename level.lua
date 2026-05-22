@@ -2,6 +2,16 @@ function draw_l()
  print("level: "..l,4,8,7)
 end
 
+function init_lg()
+ lg={
+  b=flr(dget(1)),
+  k=flr(dget(2)),
+  l=flr(dget(0))
+ }
+ if lg.l<1 then lg.l=4 end
+ if lg.k<1 then lg.k=1+flr(rnd(3)) end
+end
+
 function get_lc()
  return l%4+1
 end
@@ -20,23 +30,16 @@ function get_lb()
 end
 
 function init_l(n)
- local k
  if n and n>0 then
   init_b()
-  dset(0,n)
-  dset(1,0)
-  dset(2,0)
-  k=1+flr(rnd(3))
+  lk=1+flr(rnd(3))
+  l=n
  else
-  n=flr(dget(0))
-  if n<1 then n=4 end
   init_b()
-  load_b(flr(dget(1)))
-  k=flr(dget(2))
-  if k<1 then k=1+flr(rnd(3)) end
+  load_b(lg.b)
+  lk=lg.k
+  l=lg.l
  end
- lk=k
- l=n
  init_t()
  init_m()
  init_q()
@@ -67,7 +70,13 @@ function put_l()
 end
 
 function save_l()
- dset(0,min(l,12))
- dset(1,get_bv())
- dset(2,lk)
+ local cl=min(l,12)
+ lg.b=get_bv()
+ lg.k=lk
+ lg.l=cl
+ if cl>=flr(dget(0)) then
+  dset(0,cl)
+  dset(1,lg.b)
+  dset(2,lg.k)
+ end
 end

@@ -23,6 +23,9 @@ Luck integer. Set randomly to `1`, `2`, or `3` during game init. Luck bonuses in
 ### l
 Current level integer. `get_lc()` maps this to a level color with `l%4+1`.
 
+### lg
+Level-global continue table. Holds session continue state loaded from cart storage at boot, then updated from the current run: `b` for saved bonus bitmask, `k` for saved luck, and `l` for saved level capped to `12`.
+
 ### q
 Queue table. Holds `d` for discard count, `f` for first index, `l` for last index, and `s` for target size.
 
@@ -38,7 +41,7 @@ Wizard table. Holds signed animation `a`, extra animation `ae`, message timer `a
 ## Functions
 
 ### draw_h()
-Draws the home screen. Uses the map region anchored at `(16,0)`, draws the random home-screen panel animation with `draw_hp()`, draws the main-screen wizard with `draw_wm()`, prints the `normal`, `easy`, and `continue` menu options starting at tile `(21,7)`, and prints `ver` at main-map tile `(28,14)`.
+Draws the home screen. Uses the map region anchored at `(16,0)`, draws the random home-screen panel animation with `draw_hp()`, draws the main-screen wizard with `draw_wm()`, prints the `easy`, `normal`, and `continue` menu options starting at tile `(21,7)`, and prints `ver` at main-map tile `(28,14)`.
 
 ### draw_hg()
 Draws the game-over overlay used while `h.s==2`. After `15` frames of game-over time, also draws graphics `37,38,39,53,54,55` in a `3x2` block at tiles `(1,2)` through `(3,3)`. The box centers `game over`, then shows `continue on` and the capped continue level using `min(l,12)` in dark grey text on separate lower lines.
@@ -104,7 +107,7 @@ Returns the current level color from `l`, looping through colors `1` to `4`.
 Returns a random home-screen panel animation using `get_lp()`, but shifted into the cleared graphic range by adding `48` and starting animation at `1`.
 
 ### get_ho()
-Returns the default home-menu option from saved continue level. Returns `1` for no save or level `4`, `2` for level `1`, and `3` for any other saved continue level.
+Returns the default home-menu option from level-global continue `lg.l`. Returns `1` for level `1`, `2` for level `4`, and `3` for any other continue level.
 
 ### get_lfp()
 Returns a special first panel table with animation `40`. For levels `1` through `5`, returns `(0,142)`. From levels `6` through `9`, returns either `(0,141)` or `(0,142)` with equal chance. From level `10` onward, returns `(0,141)`, `(0,142)`, or `(0,143)` with equal chance.
@@ -137,10 +140,13 @@ Initializes the bonus table with no owned level-5 bonuses and selection state cl
 Loads owned bonus flags from bitmask integer `v`.
 
 ### init_l(n)
-Initializes gameplay level state. When `n>0`, starts a fresh run at level `n`, clears saved bonus/luck data, and randomizes luck to `1..3`. When `n<1`, loads saved level, bonus state, and luck from cart storage instead. In both cases it rebuilds target, matrix, queue, staff, guide, and wizard state, enters play mode, saves the resulting state, and starts bonus selection if the current tier is still unchosen.
+Initializes gameplay level state. When `n>0`, starts a fresh run at level `n`, clears owned bonuses for the run, and randomizes luck to `1..3`. When `n<1`, loads bonus state, luck, and level from level-global continue `lg` instead. In both cases it rebuilds target, matrix, queue, staff, guide, and wizard state, enters play mode, saves the resulting state into level-global continue, and starts bonus selection if the current tier is still unchosen.
+
+### init_lg()
+Initializes level-global continue `lg` from persistent cart storage. If no stored level exists, defaults continue level to `4`. If no stored luck exists, defaults luck to a random `1..3`.
 
 ### init_h()
-Initializes the home table with game-over animation delay `0`, default option from `get_ho()`, an empty random panel animation, home-panel odds `0`, screen state `0`, and game-over press count `0`.
+Initializes the home table with game-over animation delay `0`, default option `easy`, an empty random panel animation, home-panel odds `0`, screen state `0`, and game-over press count `0`.
 
 ### put_l()
 Advances to the next level immediately. Increments `l`, plays sound `8`, then resets the matrix, queue, staff, target, and guide for the new level. Saves the new level and current bonuses to PICO-8 cart storage. At levels `5`, `8`, and `11`, enters bonus selection with `start_b()`.
@@ -170,7 +176,7 @@ Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` 
 Applies the currently selected bonus for the current bonus level, clears bonus-select mode, and clears the wizard message. Luck bonuses `ve`, `ju`, and `pl` each immediately add a random `1..3` to `lk`. Bonus `ea` also immediately replaces the current first queue panel with graphic `140`. Bonus `ne` immediately raises queue size to `4` and refills it.
 
 ### pick_h()
-Applies the selected home-menu option. `normal` starts gameplay at level `4`, `easy` starts at level `1`, and `continue` loads saved gameplay state. All three paths go through `init_l()`.
+Applies the selected home-menu option. `easy` starts gameplay at level `1`, `normal` starts at level `4`, and `continue` loads gameplay from level-global continue `lg`. All three paths go through `init_l()`.
 
 ### pop_q()
 Returns and removes the first panel in the queue. Returns nothing if the queue is empty.
@@ -185,10 +191,10 @@ Replaces the current wizard message with id `m` and timer `am`.
 Starts bonus selection. Sets `b.l` from the current level, enables `b.on`, resets the selection index to `1`, and shows wizard message `104` briefly before the current option description takes over persistently.
 
 ### start_h()
-Returns to the home screen. Resets the home selection to `get_ho()`, clears the game-over animation state and random panel animation state, and reinitializes the wizard.
+Returns to the home screen. Resets the home selection from `get_ho()`, clears the game-over animation state and random panel animation state, and reinitializes the wizard.
 
 ### save_l()
-Stores the current level capped to `12`, current bonus bitmask, and current luck into PICO-8 cart storage.
+Stores the current level capped to `12`, current bonus bitmask, and current luck into level-global continue `lg`. Persistent cart storage is only overwritten when the current capped level is equal to or greater than the persisted level.
 
 ### move_t(x,y)
 Moves the target by one cell in direction `(x,y)`, applying the normal bounds checks and movement sounds.

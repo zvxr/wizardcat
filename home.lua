@@ -2,8 +2,8 @@ function draw_h()
  map(16,0,0,0,16,16)
  draw_hp()
  draw_wm()
- print("normal",40,56,h.o==1 and 11 or 7)
- print("easy",40,64,h.o==2 and 11 or 7)
+ print("easy",40,56,h.o==1 and 11 or 7)
+ print("normal",40,64,h.o==2 and 11 or 7)
  print("continue",40,72,h.o==3 and 11 or 7)
  print(ver,96,112,7)
 end
@@ -47,21 +47,20 @@ function get_hp()
 end
 
 function get_ho()
- local sl=flr(dget(0))
- if sl==1 then return 2 end
- if sl>1 and sl!=4 then return 3 end
- return 1
+ if lg.l==1 then return 1 end
+ if lg.l>1 and lg.l!=4 then return 3 end
+ return 2
 end
 
 function init_h()
- h={a=0,o=get_ho(),p={a=0,c=0,g=1},po=0,s=0,x=0}
+ h={a=0,o=1,p={a=0,c=0,g=1},po=0,s=0,x=0}
 end
 
 function pick_h()
  if h.o==1 then
-  init_l(4)
- elseif h.o==2 then
   init_l(1)
+ elseif h.o==2 then
+  init_l(4)
  else
   init_l(0)
  end

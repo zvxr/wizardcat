@@ -18,6 +18,7 @@ h=nil
 g=nil
 lk=0
 l=0
+lg=nil
 m=nil
 q=nil
 s=nil
@@ -48,6 +49,7 @@ end
 
 function _init()
   cartdata("wizardcat")
+  init_lg()
   init_h()
   init_w()
 end
