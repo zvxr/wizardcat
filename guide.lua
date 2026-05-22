@@ -10,17 +10,30 @@ function can_g()
 end
 
 function draw_g()
- if g.s<1 then return end
+ if g.s<1 then
+  if b.sp>0 then
+   local p=q[q.f]
+   for y=1,9 do
+    for x=1,9 do
+     local e=empty_m(m[y][x])
+     if ((p.g==139 and not e) or (p.g!=139 and e)) and check_m(p,x,y) then
+      spr(11,(x+5)*8,y*8)
+     end
+    end
+   end
+  end
+  return
+ end
  local bl=g.a\15%2==0
  local gs=g.s
  if gs==1 then
-  print("Place panels",72,88,7)
+  print("place panels",72,88,7)
   print(" with x key",72,94,7)
   if bl then
    spr(12,13*8,14*8)
   end
  elseif gs==2 then
-  print("Navigate with",72,88,7)
+  print("navigate with",72,88,7)
   print("arrow keys",72,94,7)
   if bl then
    spr(4,10*8,1*8)
@@ -29,13 +42,13 @@ function draw_g()
    spr(6,14*8,5*8)
   end
  elseif gs==3 then
-  print("Next panel",72,88,7)
+  print("next panel",72,88,7)
   print("is here",72,94,7)
   if bl then
    spr(3,4*8,3*8)
   end
  elseif gs==4 then
-  print("Wild matches",72,88,7)
+  print("wild matches",72,88,7)
   print("color",72,94,7)
   if bl then
    spr(11,10*8,4*8)
@@ -44,10 +57,10 @@ function draw_g()
    spr(11,10*8,6*8)
   end
  elseif gs==5 then
-  print("Wild matches",72,88,7)
+  print("wild matches",72,88,7)
   print("color",72,94,7)
  elseif gs==6 or gs==7 or gs==8 then
-  print("Match color",72,88,7)
+  print("match color",72,88,7)
   print("or shape",72,94,7)
  elseif gs==61 then
   print("trash panel",72,88,7)
@@ -56,13 +69,13 @@ function draw_g()
    spr(13,13*8,14*8)
   end
  elseif gs==71 then
-  print("Recover by",72,88,7)
-  print("placing panels",72,94,7)
+  print("place panels",72,88,7)
+  print("to recover",72,94,7)
  elseif gs==81 then
-  print("Finish row",72,88,7)
+  print("finish row",72,88,7)
   print("to make space",72,94,7)
  elseif gs==9 then
-  print("Change all",72,88,7)
+  print("change all",72,88,7)
   print("panels to win",72,94,7)
  end
  if bl and gs==81 then
@@ -145,7 +158,7 @@ function upd_g()
   g.s=81
  elseif g.s==6 and not can_g() then
   g.s=61
- elseif g.s==7 and q.d>0 and can_g() then
+ elseif g.s==7 and q.t>0 and can_g() then
   g.s=71
  end
 end

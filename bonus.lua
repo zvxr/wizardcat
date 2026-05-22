@@ -26,6 +26,13 @@ function draw_b()
  elseif b.su>0 then
   draw_bb(169,96,96)
  end
+ if b.ga>0 then
+  spr(206,80,96)
+ elseif b.co>0 then
+  spr(222,80,96)
+ elseif b.sp>0 then
+  spr(238,80,96)
+ end
  if b.ur>0 then
   spr(150,112,112)
  elseif b.ne>0 then
@@ -39,6 +46,8 @@ function draw_b()
    spr(bg,80,112)
   elseif b.l==8 then
    draw_bb(bg,96,96)
+  elseif b.l==13 then
+   spr(bg,80,96)
   else
    spr(bg,112,112)
   end
@@ -55,18 +64,22 @@ end
 function get_bg(i)
  if b.l==5 then return 133+i end
  if b.l==8 then return 163+i*2 end
+ if b.l==13 then return 190+i*16 end
  return 149+i
 end
 
 function get_bm(i)
  if b.l==5 then return i end
  if b.l==8 then return 5+i end
+ if b.l==13 then return 11+i end
  return 8+i
 end
 
 function get_bv()
  local v=0
+ if b.co>0 then v+=2048 end
  if b.ea>0 then v+=1 end
+ if b.ga>0 then v+=4096 end
  if b.ju>0 then v+=2 end
  if b.ma>0 then v+=4 end
  if b.me>0 then v+=8 end
@@ -77,12 +90,15 @@ function get_bv()
  if b.su>0 then v+=256 end
  if b.ur>0 then v+=512 end
  if b.ve>0 then v+=1024 end
+ if b.sp>0 then v+=8192 end
  return v
 end
 
 function init_b()
  b={
+  co=0,
   ea=0,
+  ga=0,
   ju=0,
   l=0,
   ma=0,
@@ -93,6 +109,7 @@ function init_b()
   pl=0,
   sa=0,
   sel=1,
+  sp=0,
   su=0,
   ur=0,
   ve=0
@@ -100,7 +117,9 @@ function init_b()
 end
 
 function load_b(v)
+ b.co=flr(v/2048)%2
  b.ea=v%2
+ b.ga=flr(v/4096)%2
  b.ju=flr(v/2)%2
  b.ma=flr(v/4)%2
  b.me=flr(v/8)%2
@@ -108,6 +127,7 @@ function load_b(v)
  b.ne=flr(v/32)%2
  b.pl=flr(v/64)%2
  b.sa=flr(v/128)%2
+ b.sp=flr(v/8192)%2
  b.su=flr(v/256)%2
  b.ur=flr(v/512)%2
  b.ve=flr(v/1024)%2
@@ -137,7 +157,7 @@ function pick_b()
   else
    b.su=1
   end
- else
+ elseif b.l==11 then
   if b.sel==1 then
    b.ur=1
   elseif b.sel==2 then
@@ -147,6 +167,21 @@ function pick_b()
   else
    b.pl=1
    lk+=1+flr(rnd(3))
+  end
+ else
+  if b.sel==1 then
+   b.ga=1
+   q.g=1
+   if q.f+2<=q.l then
+    q[q.f+2]={a=0,c=0,g=207}
+    q.g=0
+   end
+   fill_q()
+  elseif b.sel==2 then
+   b.co=1
+   q.t=-1
+  else
+   b.sp=1
   end
  end
  b.on=0

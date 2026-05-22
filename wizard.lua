@@ -1,5 +1,5 @@
 function draw_w()
- if l>=16 then
+ if l>=17 then
   local fg=198+(w.ab\18)%4*2
   spr(fg,88,104)
   spr(fg+1,96,104)
@@ -65,14 +65,17 @@ function get_wm(id)
  if id==9 then return "trash luck" end
  if id==10 then return "far future" end
  if id==11 then return "luck+" end
+ if id==12 then return "galaxy" end
+ if id==13 then return "free trash" end
+ if id==14 then return "reveal" end
  if id==101 then return "welcome" end
  if id==102 then return "be careful..." end
  if id==103 then return "almost there" end
  if id==104 then return "select bonus" end
- if id==201 then return "I <3 minnows" end
+ if id==201 then return "i <3 minnows" end
  if id==202 then return "magic is cool" end
  if id==203 then return "meow" end
- if id==204 then return "Luck: "..lk end
+ if id==204 then return "luck: "..lk end
 end
 
 function put_w(id,am)
@@ -81,7 +84,7 @@ function put_w(id,am)
 end
 
 function upd_w()
- if l>=16 then
+ if l>=17 then
   w.ab=(w.ab+1)%72
  else
   w.ab=0

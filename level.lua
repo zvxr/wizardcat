@@ -8,6 +8,7 @@ function init_lg()
   k=flr(dget(2)),
   l=flr(dget(0))
  }
+ lg.b%=2048
  if lg.l<1 then lg.l=4 end
  if lg.k<1 then lg.k=1+flr(rnd(3)) end
 end
@@ -26,6 +27,9 @@ function get_lb()
  if l==11 then
   return b.ne>0 or b.pl>0 or b.ur>0
  end
+ if l==13 then
+  return b.co>0 or b.ga>0 or b.sp>0
+ end
  return true
 end
 
@@ -37,6 +41,9 @@ function init_l(n)
  else
   init_b()
   load_b(lg.b)
+  b.co=0
+  b.ga=0
+  b.sp=0
   lk=lg.k
   l=lg.l
  end
@@ -64,14 +71,14 @@ function put_l()
  init_t()
  init_g()
  save_l()
- if l==5 or l==8 or l==11 then
+ if l==5 or l==8 or l==11 or l==13 then
   start_b()
  end
 end
 
 function save_l()
  local cl=min(l,12)
- lg.b=get_bv()
+ lg.b=get_bv()%2048
  lg.k=lk
  lg.l=cl
  if cl>=flr(dget(0)) then

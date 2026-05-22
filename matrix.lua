@@ -14,6 +14,9 @@ function check_m(p,x,y)
  if p.g==139 then
   return not empty_m(m[y][x])
  end
+ if p.g==207 then
+  return true
+ end
  local n=false
  if x>1 then
   if not empty_m(m[y][x-1]) then n=true end
@@ -31,7 +34,7 @@ function check_m(p,x,y)
   if not empty_m(m[y+1][x]) then n=true end
   if not check_mc(p,x,y+1) then return end
  end
- if not n and p.c!=0 then return end
+ if not n and (p.c!=0 or count_mt()>0) then return end
  return true
 end
 
@@ -47,7 +50,7 @@ end
 function check_mc(p,x,y)
  local n=m[y][x]
  if empty_m(n) then return true end
- if p.g==140 or n.g==140 then return true end
+ if p.g==140 or n.g==140 or p.g==207 or n.g==207 then return true end
  if n.g==p.g then return true end
  if p.c==0 then
   if p.g==141 then
@@ -124,11 +127,15 @@ function put_p()
    sfx(5)
    return
   end
-  m[t.y][t.x].g+=48
-  m[t.y][t.x].a=40
+  if m[t.y][t.x].g==207 then
+   m[t.y][t.x]={a=40,c=get_lc(),g=1}
+  else
+   m[t.y][t.x].g+=48
+   m[t.y][t.x].a=40
+  end
   pop_q()
-  if q.d>0 then
-   q.d=max(0,q.d-(b.ma>0 and 2 or 1))
+  if q.t>-1 then
+   q.t=max(0,q.t-(b.ma>0 and 2 or 1))
   end
   sfx(4)
   if check_mt() then
@@ -160,20 +167,22 @@ function put_p()
  end
  if fy then
   for x=1,9 do
-   m[t.y][x].g+=48
-   m[t.y][x].a=40
+   if m[t.y][x].g!=207 then
+    m[t.y][x].g+=48
+    m[t.y][x].a=40
+   end
   end
  end
  if fx then
   for y=1,9 do
-   if not fy or y!=t.y then
+   if (not fy or y!=t.y) and m[y][t.x].g!=207 then
     m[y][t.x].g+=48
     m[y][t.x].a=40
    end
   end
  end
- if q.d>0 then
-  q.d=max(0,q.d-(b.ma>0 and 2 or 1))
+ if q.t>-1 then
+  q.t=max(0,q.t-(b.ma>0 and 2 or 1))
  end
  if fy or fx then
   sfx(7)

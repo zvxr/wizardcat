@@ -3,14 +3,14 @@ function add_q(p)
  q[q.l]=p
 end
 
-function discard_q()
+function trash_q()
  pop_q()
  fill_q()
  if rnd(100)<lk*((b.mo>0 and 1 or 0)+(b.ur>0 and 1 or 0)) then
   sfx(9)
  else
-  q.d+=1
-  if q.d==2 then
+  q.t+=1
+  if q.t==2 then
    put_w(102,60)
   end
  end
@@ -30,11 +30,11 @@ function draw_q()
  if b.ne>0 and q.f+3<=q.l then
   draw_p(0,q[q.f+3],4,11)
  end
- if q.d==0 then
+ if q.t<1 then
   spr(17,16,16)
- elseif q.d==1 then
+ elseif q.t==1 then
   spr(19,16,16)
- elseif q.d==2 then
+ elseif q.t==2 then
   spr(20,16,16)
  else
   spr(35,16,16)
@@ -46,10 +46,11 @@ end
 
 function init_q()
  q={
-  d=0,
   f=1,
+  g=b.ga>0 and 1 or 0,
   l=0,
-  s=b.ne>0 and 4 or 3
+  s=b.ne>0 and 4 or 3,
+  t=b.co>0 and -1 or 0
  }
  if l==1 then
   add_q({a=40,c=0,g=142})
@@ -70,7 +71,10 @@ function fill_q()
     end
   end
   while q.l-q.f+1<q.s do
-    if b.su>0 and rnd(100)<lk then
+    if q.g>0 and q.f==1 and q.l-q.f+1==2 then
+      add_q({a=0,c=0,g=207})
+      q.g=0
+    elseif b.su>0 and rnd(100)<lk then
       add_q({a=40,c=0,g=139})
     else
       add_q(get_lp())

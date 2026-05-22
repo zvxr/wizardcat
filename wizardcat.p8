@@ -69,7 +69,7 @@ function _update()
       upd_s()
  upd_g()
     end
-    if q.d>=3 then
+    if q.t>=3 then
       h.s=2
       h.a=0
       h.x=0
@@ -79,7 +79,7 @@ function _update()
 end
 
 function upd_input()
- if q.d>=3 then return end
+ if q.t>=3 then return end
  if use_g() then return end
  if btnp(0) then
   move_t(-1,0)
@@ -90,7 +90,7 @@ function upd_input()
  elseif btnp(3) then
   move_t(0,1)
  elseif btnp(4) then
-  discard_q()
+  trash_q()
  elseif btnp(5) then
   put_p()
  end
@@ -251,4 +251,3 @@ __sfx__
 __music__
 03 0a0b4344
 01 41424344
-
