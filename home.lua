@@ -21,7 +21,7 @@ function draw_hg()
  rect(28,54,100,80,7)
  print("game over",46,56,7)
  print("continue on",38,68,5)
- print("level "..min(l,12),38,74,5)
+ print("level "..min(l,7),38,74,5)
 end
 
 function draw_hp()

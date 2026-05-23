@@ -6,6 +6,14 @@ function draw_m(lc)
   end
 end
 
+function any_m()
+ for y=1,9 do
+  for x=1,9 do
+   if not empty_m(m[y][x]) then return true end
+  end
+ end
+end
+
 function empty_m(p)
  return p.g==1 or p.g>=112 and p.g<=127 or p.g>=188 and p.g<=191
 end
@@ -34,7 +42,7 @@ function check_m(p,x,y)
   if not empty_m(m[y+1][x]) then n=true end
   if not check_mc(p,x,y+1) then return end
  end
- if not n and (p.c!=0 or count_mt()>0) then return end
+ if not n and (p.c!=0 or any_m()) then return end
  return true
 end
 
@@ -86,6 +94,18 @@ function init_m()
         c=lc,     -- color
         g=1       -- graphic
       }
+      if l<3 then
+       if x<3 or x>7 or y<3 or y>7 then
+        m[y][x]={a=0,c=lc,g=112}
+       end
+      elseif l==3 then
+       if x==1 or x==9 or y==1 or y==9 then
+        m[y][x]={a=0,c=lc,g=112}
+       end
+      end
+      if x==5 and (y==1 or y==2 or y==8 or y==9) or y==5 and (x==1 or x==2 or x==8 or x==9) then
+       m[y][x]={a=40,c=lc,g=1}
+      end
     end
   end
 end

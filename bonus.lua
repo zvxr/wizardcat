@@ -46,7 +46,7 @@ function draw_b()
    spr(bg,80,112)
   elseif b.l==8 then
    draw_bb(bg,96,96)
-  elseif b.l==13 then
+  elseif b.l==14 then
    spr(bg,80,96)
   else
    spr(bg,112,112)
@@ -64,15 +64,25 @@ end
 function get_bg(i)
  if b.l==5 then return 133+i end
  if b.l==8 then return 163+i*2 end
- if b.l==13 then return 190+i*16 end
+ if b.l==14 then return 190+i*16 end
  return 149+i
 end
 
 function get_bm(i)
  if b.l==5 then return i end
  if b.l==8 then return 5+i end
- if b.l==13 then return 11+i end
+ if b.l==14 then return 11+i end
  return 8+i
+end
+
+function get_bs(v)
+ local s=0
+ if v%2>0 then s+=1 end
+ if flr(v/4)%2>0 then s+=4 end
+ if flr(v/8)%2>0 then s+=8 end
+ if flr(v/16)%2>0 then s+=16 end
+ if flr(v/1024)%2>0 then s+=1024 end
+ return s
 end
 
 function get_bv()

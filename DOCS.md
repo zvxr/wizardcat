@@ -24,7 +24,7 @@ Luck integer. Set randomly to `1`, `2`, or `3` during game init. Luck bonuses in
 Current level integer. `get_lc()` maps this to a level color with `l%4+1`.
 
 ### lg
-Level-global continue table. Holds session continue state loaded from cart storage at boot, then updated from the current run: `b` for saved bonus bitmask, `k` for saved luck, and `l` for saved level capped to `12`.
+Level-global continue table. Holds session continue state loaded from cart storage at boot, then updated from the current run: `b` for saved level-5 bonus bitmask, `k` for saved luck, and `l` for saved level capped to `7`.
 
 ### q
 Queue table. Holds `f` for first index, `l` for last index, `s` for target size, and `t` for trash count.
@@ -44,13 +44,13 @@ Wizard table. Holds signed animation `a`, level-12+ bonus animation timer `ab`, 
 Draws the home screen. Uses the map region anchored at `(16,0)`, draws the random home-screen panel animation with `draw_hp()`, draws the main-screen wizard with `draw_wm()`, prints the `easy`, `normal`, and `continue` menu options starting at tile `(21,7)`, and prints `ver` at main-map tile `(28,14)`.
 
 ### draw_hg()
-Draws the game-over overlay used while `h.s==2`. After `15` frames of game-over time, also draws graphics `37,38,39,53,54,55` in a `3x2` block at tiles `(1,2)` through `(3,3)`. The box centers `game over`, then shows `continue on` and the capped continue level using `min(l,12)` in dark grey text on separate lower lines.
+Draws the game-over overlay used while `h.s==2`. After `15` frames of game-over time, also draws graphics `37,38,39,53,54,55` in a `3x2` block at tiles `(1,2)` through `(3,3)`. The box centers `game over`, then shows `continue on` and the capped continue level using `min(l,7)` in dark grey text on separate lower lines.
 
 ### draw_hp()
 Draws the random home-screen panel animation at home-map tile `(24,13)`, which renders at screen tile `(8,13)`. Uses a cleared-range graphic from `112..127` with the panel's color, starts from the cleared end state, grows toward the full state by driving `a` upward, holds there for one second, then returns to the cleared end state. Uses border remap `5 -> 0` instead of the normal level-color remap. Does not draw while idle.
 
 ### draw_b()
-Draws owned bonus graphics on the HUD. Level-5 bonus graphics draw at tile `(10,14)`, level-8 bonuses draw as a 2x2 graphic with top-left at `(12,12)`, level-11 bonuses draw at `(14,14)`, and level-13 bonuses draw at `(10,12)`. Also draws preview markers using graphic `10` at `(4,6)`, `(4,9)`, and `(4,12)`, remapping sprite color `8` to `3` by default and to `11` when bonuses `me`, `sa`, or `ne` are active for that slot. During bonus selection, draws the currently highlighted option in that level's HUD slot instead, including level `13` options `ga`, `co`, and `sp`.
+Draws owned bonus graphics on the HUD. Level-5 bonus graphics draw at tile `(10,14)`, level-8 bonuses draw as a 2x2 graphic with top-left at `(12,12)`, level-11 bonuses draw at `(14,14)`, and level-14 bonuses draw at `(10,12)`. Also draws preview markers using graphic `10` at `(4,6)`, `(4,9)`, and `(4,12)`, remapping sprite color `8` to `3` by default and to `11` when bonuses `me`, `sa`, or `ne` are active for that slot. During bonus selection, draws the currently highlighted option in that level's HUD slot instead, including level `14` options `ga`, `co`, and `sp`.
 
 ### draw_bb(g,x,y)
 Draws a 2x2 bonus graphic block using top-left graphic `g` at pixel position `(x,y)`.
@@ -67,8 +67,11 @@ Draws the 9x9 panel matrix at tile coordinates starting from `(6,1)`. Passes the
 ### draw_p(lc,p,x,y)
 Draws one panel at tile coordinate `(x,y)`. Blank graphic `1` uses `p.a` to animate through graphics `9`, `8`, `7`, then `1`, with no palette swap. Cleared standard panels with graphics `112..127` and cleared special panels `188..191` use reverse animation graphics and draw as blank graphic `1` when `a` reaches `0`, while still using level-border recoloring. Standard play graphics `64` through `76` use `p.a` to choose an animated display graphic before drawing. Recolors sprite color `5` to the level color and sprite color `6` to the panel color.
 
+### any_m()
+Checks whether the matrix currently has any live non-empty panel on it. Returns true when at least one cell is not treated as empty by `empty_m()`.
+
 ### check_m(p,x,y)
-Checks whether panel `p` can be placed at matrix coordinate `(x,y)` based on the four cardinal neighbors. Only in-bounds neighbors are checked. Returns true only if every checked neighbor passes `check_mc()`. Panels whose color is not `0` must also touch at least one non-empty neighbor. Special color-`0` tiles `140..143` may be placed freely only as the first touched tile on an otherwise empty board; after that they must also touch at least one non-empty neighbor. Galaxy tile `207` is always placeable.
+Checks whether panel `p` can be placed at matrix coordinate `(x,y)` based on the four cardinal neighbors. Only in-bounds neighbors are checked. Returns true only if every checked neighbor passes `check_mc()`. Panels whose color is not `0` must also touch at least one non-empty neighbor. Special color-`0` tiles `140..143` may be placed freely only when there are no currently live non-empty panels on the board; after that they must also touch at least one non-empty neighbor. Galaxy tile `207` is always placeable.
 
 ### check_mt()
 Checks whether the matrix is ready to advance the level. Returns true only when every matrix panel has been touched at least once, meaning no panel still has graphic `1`.
@@ -119,10 +122,13 @@ Returns a new level panel table. Uses `lk` as the percent chance to return `get_
 Returns the current level's bonus graphic for selection index `i`.
 
 ### get_bm(i)
-Returns the current level's persistent wizard message id for selection index `i`. Level 5 uses ids `1..5`, level 8 uses `6..8`, level 11 uses `9..11`, and level 13 uses `12..14`.
+Returns the current level's persistent wizard message id for selection index `i`. Level 5 uses ids `1..5`, level 8 uses `6..8`, level 11 uses `9..11`, and level 14 uses `12..14`.
 
 ### get_bv()
-Returns the current bonus selections as a bitmask integer for PICO-8 cart storage, including level-13 flags `co`, `ga`, and `sp`.
+Returns the current bonus selections as a bitmask integer for PICO-8 cart storage, including level-14 flags `co`, `ga`, and `sp`.
+
+### get_bs(v)
+Returns only the level-5 subset of bonus bitmask `v`, preserving `ea`, `ma`, `me`, `mo`, and `ve` for continue data while stripping later-tier bonuses.
 
 ### get_wm(m)
 Returns wizard message text for message id `m`. Persistent ids `1..99` are system text, triggered ids `100..199` are timed events, and random ids `200+` are chatter. Current ids include `1` for `show next`, `2` for `luck+`, `3` for `rainbow`, `4` for `trash luck`, `5` for `recover+`, `6` for `luck+`, `7` for `near future`, `8` for `remove`, `9` for `trash luck`, `10` for `far future`, `11` for `luck+`, `12` for `galaxy`, `13` for `free trash`, `14` for `reveal`, `101` for `welcome`, `102` for `be careful...`, `103` for `almost there`, `104` for `select bonus`, `201` for `i <3 minnows`, `202` for `magic is cool`, `203` for `meow`, and `204` for `luck: {lk}`.
@@ -131,31 +137,31 @@ Returns wizard message text for message id `m`. Persistent ids `1..99` are syste
 Checks whether the current queue panel has at least one valid placement that would complete a row.
 
 ### get_lb()
-Returns whether the current bonus tier for level `l` has already been selected. Checks levels `5`, `8`, `11`, and `13`, and returns true for non-bonus levels.
+Returns whether the current bonus tier for level `l` has already been selected. Checks levels `5`, `8`, `11`, and `14`, and returns true for non-bonus levels.
 
 ### init_b()
-Initializes the bonus table with no owned bonuses and selection state cleared, including level-13 flags `co`, `ga`, and `sp`.
+Initializes the bonus table with no owned bonuses and selection state cleared, including level-14 flags `co`, `ga`, and `sp`.
 
 ### load_b(v)
 Loads owned bonus flags from bitmask integer `v`.
 
 ### init_l(n)
-Initializes gameplay level state. When `n>0`, starts a fresh run at level `n`, clears owned bonuses for the run, and randomizes luck to `1..3`. When `n<1`, loads bonus state, luck, and level from level-global continue `lg` instead, and explicitly clears level-13 bonuses `co`, `ga`, and `sp`. In both cases it rebuilds target, matrix, queue, staff, guide, and wizard state, enters play mode, saves the resulting state into level-global continue, and starts bonus selection if the current tier is still unchosen.
+Initializes gameplay level state. When `n>0`, starts a fresh run at level `n`, clears owned bonuses for the run, and randomizes luck to `1..3`. When `n<1`, loads bonus state, luck, and level from level-global continue `lg` instead, and explicitly clears level-14 bonuses `co`, `ga`, and `sp`. In both cases it rebuilds target, matrix, queue, staff, guide, and wizard state, enters play mode, saves the resulting state into level-global continue, and starts bonus selection if the current tier is still unchosen.
 
 ### init_lg()
-Initializes level-global continue `lg` from persistent cart storage. If no stored level exists, defaults continue level to `4`. If no stored luck exists, defaults luck to a random `1..3`. Strips level-13 bonus bits from the loaded bonus mask because continue is capped at level `12`.
+Initializes level-global continue `lg` from persistent cart storage. If no stored level exists, defaults continue level to `4`. If no stored luck exists, defaults luck to a random `1..3`. Loads only the level-5 bonus bits from the stored bonus mask.
 
 ### init_h()
 Initializes the home table with game-over animation delay `0`, default option `easy`, an empty random panel animation, home-panel odds `0`, screen state `0`, and game-over press count `0`.
 
 ### put_l()
-Advances to the next level immediately. Increments `l`, plays sound `8`, then resets the matrix, queue, staff, target, and guide for the new level. Saves the new level and current bonuses to PICO-8 cart storage. At levels `5`, `8`, `11`, and `13`, enters bonus selection with `start_b()`.
+Advances to the next level immediately. Increments `l`, plays sound `8`, then resets the matrix, queue, staff, target, and guide for the new level. Saves the new level and current bonuses to PICO-8 cart storage. At levels `5`, `8`, `11`, and `14`, enters bonus selection with `start_b()`.
 
 ### init_t()
 Initializes the target table with starting coordinates.
 
 ### init_m()
-Replaces the global matrix with a new 9x9 panel array. Looks up the current level color with `get_lc()`. Each panel starts as graphic `1`, color `lc`, animation `40`.
+Replaces the global matrix with a new 9x9 panel array. Looks up the current level color with `get_lc()`. Each panel normally starts as graphic `1`, color `lc`, animation `40`. At levels `1` and `2`, the outer border two cells deep instead starts as completed standard cells with graphic `112` and animation `0`. At level `3`, only the outer border one cell deep starts completed the same way. For all three of those levels, the eight edge-middle cells at `(5,1)`, `(5,2)`, `(5,8)`, `(5,9)`, `(1,5)`, `(2,5)`, `(8,5)`, and `(9,5)` are forced back to blank so row completion still has to be earned.
 
 ### init_q()
 Initializes the queue table with first index `1`, galaxy-load flag `g`, last index `0`, target size `3`, or `4` when bonus `ne` is active, and trash count `0` in `q.t`, or `-1` when bonus `co` is active. At level `1`, preloads the queue with special panel `142`, then normal panels `(8,67)` and `(8,68)`, then forced dead panel `(14,73)` so the trash lesson is guaranteed.
@@ -173,7 +179,7 @@ Appends panel `p` to the back of the queue.
 Fills the queue up to `q.s` live items. If the queue is empty, adds `get_lfp()` first, unless bonus `ea` is active, in which case it adds graphic `140` instead. When bonus `ga` is active, the third live queue tile on the initial level load is replaced with galaxy tile `207`, then the queue flag is cleared so later refills use normal panels. Other remaining slots fill with `get_lp()`, unless bonus `su` is active and a raw `lk` percent roll replaces that panel with graphic `139`. Uses the live count `q.l-q.f+1`, so refills continue to work after pops.
 
 ### pick_b()
-Applies the currently selected bonus for the current bonus level, clears bonus-select mode, and clears the wizard message. Luck bonuses `ve`, `ju`, and `pl` each immediately add a random `1..3` to `lk`. Bonus `ea` also immediately replaces the current first queue panel with graphic `140`. Bonus `ne` immediately raises queue size to `4` and refills it. Level-13 bonuses are `ga`, which immediately replaces the current third live queue tile with galaxy tile `207` and also arms the one-shot initial galaxy load for future level starts, `co` for one free trash at the start of each level by setting `q.t=-1`, and `sp` for always-on reveal guidelines.
+Applies the currently selected bonus for the current bonus level, clears bonus-select mode, and clears the wizard message. Luck bonuses `ve`, `ju`, and `pl` each immediately add a random `1..3` to `lk`. Bonus `ea` also immediately replaces the current first queue panel with graphic `140`. Bonus `ne` immediately raises queue size to `4` and refills it. Level-14 bonuses are `ga`, which immediately replaces the current third live queue tile with galaxy tile `207` and also arms the one-shot initial galaxy load for future level starts, `co` for one free trash at the start of each level by setting `q.t=-1`, and `sp` for always-on reveal guidelines.
 
 ### pick_h()
 Applies the selected home-menu option. `easy` starts gameplay at level `1`, `normal` starts at level `4`, and `continue` loads gameplay from level-global continue `lg`. All three paths go through `init_l()`.
@@ -194,7 +200,7 @@ Starts bonus selection. Sets `b.l` from the current level, enables `b.on`, reset
 Returns to the home screen. Resets the home selection from `get_ho()`, clears the game-over animation state and random panel animation state, and reinitializes the wizard.
 
 ### save_l()
-Stores the current level capped to `12`, current bonus bitmask below the level-13 range, and current luck into level-global continue `lg`. Persistent cart storage is only overwritten when the current capped level is equal to or greater than the persisted level.
+Stores the current level capped to `7`, current level-5 bonus bitmask, and current luck into level-global continue `lg`. Persistent cart storage is only overwritten when the current capped level is equal to or greater than the persisted level.
 
 ### move_t(x,y)
 Moves the target by one cell in direction `(x,y)`, applying the normal bounds checks and movement sounds.
@@ -203,7 +209,7 @@ Moves the target by one cell in direction `(x,y)`, applying the normal bounds ch
 Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` trashes the first queue panel with `trash_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.t` reaches `3`, input stops until the cart is restarted.
 
 ### upd_b()
-Handles bonus selection input while `b.on` is active. Once the short `select bonus` prompt clears, it restores the current option description persistently using `get_bm()`. Left and right cycle through the current level's bonus options with wrapping and replace the wizard message using `get_bm()`. Levels `8`, `11`, and `13` have three options each; level `5` has five. Button `5` confirms the current selection with `pick_b()`.
+Handles bonus selection input while `b.on` is active. Once the short `select bonus` prompt clears, it restores the current option description persistently using `get_bm()`. Left and right cycle through the current level's bonus options with wrapping and replace the wizard message using `get_bm()`. Levels `8`, `11`, and `14` have three options each; level `5` has five. Button `5` confirms the current selection with `pick_b()`.
 
 ### upd_h()
 Handles home-menu input. Also updates the random home-screen panel animation: when idle, it uses chance `rnd(1000)<1+h.po` to create a random panel with `get_hp()`, otherwise increments `h.po`; when active, it advances the forward timer until the animation ends. Up and down cycle through the three menu options with wrapping and play sound `3`. Button `5` confirms the current option with `pick_h()`.
