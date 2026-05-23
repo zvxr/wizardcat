@@ -37,3 +37,12 @@ function move_t(x,y)
   end
  end
 end
+
+function point_t(mx,my)
+ local x=flr(mx/8)-5
+ local y=flr(my/8)
+ if x<1 or x>9 or y<1 or y>9 then return end
+ t.x=x
+ t.y=y
+ return true
+end

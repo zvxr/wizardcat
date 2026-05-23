@@ -19,6 +19,7 @@ g=nil
 lk=0
 l=0
 lg=nil
+mb=0
 m=nil
 q=nil
 s=nil
@@ -49,6 +50,7 @@ end
 
 function _init()
   cartdata("wizardcat")
+  poke(0x5f2d,1)
   init_lg()
   init_h()
   init_w()
@@ -79,9 +81,14 @@ function _update()
 end
 
 function upd_input()
+ local mx,my,ml,mr=read_m()
  if q.t>=3 then return end
- if use_g() then return end
- if btnp(0) then
+ if use_g(mx,my,ml) then return end
+ if ml and point_t(mx,my) then
+  put_p()
+ elseif mr then
+  trash_q()
+ elseif btnp(0) then
   move_t(-1,0)
  elseif btnp(1) then
   move_t(1,0)
@@ -94,6 +101,14 @@ function upd_input()
  elseif btnp(5) then
   put_p()
  end
+end
+
+function read_m()
+ local sb=stat(34)
+ local ml=band(sb,1)>0 and band(mb,1)==0
+ local mr=band(sb,2)>0 and band(mb,2)==0
+ mb=sb
+ return stat(32),stat(33),ml,mr
 end
 
 __gfx__

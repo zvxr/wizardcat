@@ -9,7 +9,7 @@ Bonus table. Holds owned bonus flags `ea`, `ju`, `ma`, `me`, `mo`, `ne`, `pl`, `
 Home table. Holds `a` for the game-over animation delay, `o` for main-menu option, `p` for the random home-screen panel animation, `po` for its odds growth, `s` for screen state, and `x` for game-over `x` press count.
 
 ### g
-Guide table. Level-1 only. Holds blink/frame counter `a`, navigation key count `k`, guide stage `s`, and stage timer `t`.
+Guide table. Level-1 only. Holds blink/frame counter `a`, one-step navigation flag `k`, mouse-use flag `m`, guide stage `s`, and stage timer `t`.
 
 ### t
 Target table. Holds `x` and `y` tile coordinates.
@@ -25,6 +25,9 @@ Current level integer. `get_lc()` maps this to a level color with `l%4+1`.
 
 ### lg
 Level-global continue table. Holds session continue state loaded from cart storage at boot, then updated from the current run: `b` for saved level-5 bonus bitmask, `k` for saved luck, and `l` for saved level capped to `7`.
+
+### mb
+Previous mouse-button bitmask used to detect left- and right-click edges from `stat(34)`.
 
 ### q
 Queue table. Holds `f` for first index, `l` for last index, `s` for target size, and `t` for trash count.
@@ -205,17 +208,23 @@ Stores the current level capped to `7`, current level-5 bonus bitmask, and curre
 ### move_t(x,y)
 Moves the target by one cell in direction `(x,y)`, applying the normal bounds checks and movement sounds.
 
+### point_t(mx,my)
+Maps screen pixel position `(mx,my)` onto the 9x9 matrix. If the mouse is inside the matrix, updates `t.x` and `t.y` to the matching cell and returns true.
+
+### read_m()
+Reads mouse state from `stat(32)`, `stat(33)`, and `stat(34)`. Returns mouse pixel position plus left- and right-click edge booleans, while updating `mb`.
+
 ### upd_input()
-Handles directional target input with `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` trashes the first queue panel with `trash_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.t` reaches `3`, input stops until the cart is restarted.
+Handles gameplay input. Left mouse click places on the clicked matrix cell, right mouse click trashes with `trash_q()`, and keyboard controls still work through `btnp()`. Target movement is limited to the `1..9` matrix bounds. Plays sound `3` on a valid move and sound `1` when the target presses against an edge. Button `4` trashes the first queue panel with `trash_q()`. Button `5` attempts to place the first queue panel with `put_p()`. When `q.t` reaches `3`, input stops until the cart is restarted.
 
 ### upd_b()
-Handles bonus selection input while `b.on` is active. Once the short `select bonus` prompt clears, it restores the current option description persistently using `get_bm()`. Left and right cycle through the current level's bonus options with wrapping and replace the wizard message using `get_bm()`. Levels `8`, `11`, and `14` have three options each; level `5` has five. Button `5` confirms the current selection with `pick_b()`.
+Handles bonus selection input while `b.on` is active. Once the short `select bonus` prompt clears, it restores the current option description persistently using `get_bm()`. Left and right cycle through the current level's bonus options with wrapping and replace the wizard message using `get_bm()`. Levels `8`, `11`, and `14` have three options each; level `5` has five. Button `5` confirms the current selection with `pick_b()`. Left mouse click confirms when it hits the preview graphic, cycles left when it lands to the left of that preview, and cycles right when it lands to the right.
 
 ### upd_h()
-Handles home-menu input. Also updates the random home-screen panel animation: when idle, it uses chance `rnd(1000)<1+h.po` to create a random panel with `get_hp()`, otherwise increments `h.po`; when active, it advances the forward timer until the animation ends. Up and down cycle through the three menu options with wrapping and play sound `3`. Button `5` confirms the current option with `pick_h()`.
+Handles home-menu input. Also updates the random home-screen panel animation: when idle, it uses chance `rnd(1000)<1+h.po` to create a random panel with `get_hp()`, otherwise increments `h.po`; when active, it advances the forward timer until the animation ends. Up and down cycle through the three menu options with wrapping and play sound `3`. Button `5` confirms the current option with `pick_h()`. Left mouse click on a menu row also selects and confirms it.
 
 ### upd_hg()
-Handles game-over input. Increments `h.a` up to `15` to drive the delayed lose animation. Each press of button `5` increments `h.x`; on the second press it returns to the home screen with `start_h()`.
+Handles game-over input. Increments `h.a` up to `15` to drive the delayed lose animation. Each press of button `5`, or left mouse click inside the game-over box, increments `h.x`; on the second press it returns to the home screen with `start_h()`.
 
 ### upd_m()
 Reduces each matrix panel animation counter by `1` until it reaches `0`.
@@ -233,11 +242,11 @@ Moves the wizard animation values toward `0` by `1` each update. At level `17+`,
 - `g`: guide state. `a` is the blink timer, `k` is the arrow-key count, `s` is the current guide stage, and `t` is the hold timer.
 
 - `can_g()`: Returns whether the current queue panel can be placed anywhere on the matrix under normal placement rules.
-- `draw_g()`: Draws the level-1 guide text and helper sprites under the wizard text area. The initial place step blinks graphic `12` at `(13,14)`, the trash step blinks graphic `13` at `(13,14)`, and the row-finish step blinks only the exact finishing cell from `where_g()`. Printed guide text is lowercase. When bonus `sp` is active and the guide is otherwise inactive, it continuously reveals all currently valid placement cells.
+- `draw_g()`: Draws the level-1 guide text and helper sprites under the wizard text area. The initial place step blinks graphic `12` at `(13,14)`, the trash step blinks graphic `13` at `(13,14)`, and the row-finish step blinks only the exact finishing cell from `where_g()`. If the guide has seen mouse use, the trash step says `with r-click`; otherwise it says `with z key`. Printed guide text is lowercase. When bonus `sp` is active and the guide is otherwise inactive, it continuously reveals all currently valid placement cells.
 - `fin_g()`: Returns whether `where_g()` found any legal placement that would complete a row or column.
-- `init_g()`: Initializes level-1 guide state as `g={a=0,k=0,s=l==1 and 1 or 0,t=0}` and clears wizard text while guide mode is active.
+- `init_g()`: Initializes level-1 guide state as `g={a=0,k=0,m=0,s=l==1 and 1 or 0,t=0}` and clears wizard text while guide mode is active.
 - `put_g(r)`: Advances the guide after successful placements. If `r` is truthy, the placement finished a row or column and can advance the late guide state.
 - `upd_g()`: Updates blink timers and guide stage transitions. Promotes the late guide to the row-finish hint as soon as the current panel can legally finish a row.
-- `use_g()`: Returns whether the guide is currently consuming gameplay input. During the row-finish step, it handles movement directly and only allows `X` to place at the exact finishing coordinate from `where_g()`.
+- `use_g(mx,my,ml)`: Returns whether the guide is currently consuming gameplay input. During the opening place step, any left mouse click forces placement on the center cell `(5,5)`. During the navigation step, one arrow-key press or any left mouse click is enough to continue, and mouse input there is consumed so it cannot place a panel. During the row-finish step, it handles movement directly and only allows placement at the exact finishing coordinate from `where_g()`. Mouse use sets `g.m=1` so later trash text can switch to `with r-click`.
 - `where_g()`: Returns the first matrix coordinate `(x,y)` where the current queue panel can be legally placed and would complete a row or column.
 - `step_g()`: Advances the guide when an external gameplay event should move it forward outside of placement/update flow.

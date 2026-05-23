@@ -76,13 +76,13 @@ function get_bm(i)
 end
 
 function get_bs(v)
- local s=0
- if v%2>0 then s+=1 end
- if flr(v/4)%2>0 then s+=4 end
- if flr(v/8)%2>0 then s+=8 end
- if flr(v/16)%2>0 then s+=16 end
- if flr(v/1024)%2>0 then s+=1024 end
- return s
+ local sv=0
+ if v%2>0 then sv+=1 end
+ if flr(v/4)%2>0 then sv+=4 end
+ if flr(v/8)%2>0 then sv+=8 end
+ if flr(v/16)%2>0 then sv+=16 end
+ if flr(v/1024)%2>0 then sv+=1024 end
+ return sv
 end
 
 function get_bv()
@@ -207,6 +207,7 @@ function start_b()
 end
 
 function upd_b()
+ local mx,my,ml=read_m()
  local n=b.l==5 and 5 or 3
  if w.m==0 then
   put_w(get_bm(b.sel),-1)
@@ -221,5 +222,20 @@ function upd_b()
   put_w(get_bm(b.sel),-1)
  elseif btnp(5) then
   pick_b()
+ elseif ml then
+  local x=b.l==5 and 80 or b.l==8 and 96 or b.l==14 and 80 or 112
+  local y=b.l==5 and 112 or b.l==8 and 96 or b.l==14 and 96 or 112
+  local bw=b.l==8 and 16 or 8
+  if mx>=x and mx<x+bw and my>=y and my<y+bw then
+   pick_b()
+  elseif mx<x then
+   b.sel-=1
+   if b.sel<1 then b.sel=n end
+   put_w(get_bm(b.sel),-1)
+  elseif mx>=x+bw then
+   b.sel+=1
+   if b.sel>n then b.sel=1 end
+   put_w(get_bm(b.sel),-1)
+  end
  end
 end

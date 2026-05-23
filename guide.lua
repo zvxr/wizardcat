@@ -64,7 +64,7 @@ function draw_g()
   print("or shape",72,94,7)
  elseif gs==61 then
   print("trash panel",72,88,7)
-  print("with z key",72,94,7)
+  print(g.m>0 and "with r-click" or "with z key",72,94,7)
   if bl then
    spr(13,13*8,14*8)
   end
@@ -112,7 +112,7 @@ function where_g()
 end
 
 function init_g()
- g={a=0,k=0,s=l==1 and 1 or 0,t=0}
+ g={a=0,k=0,m=0,s=l==1 and 1 or 0,t=0}
  if w then
   w.m=0
   w.am=0
@@ -139,7 +139,7 @@ function upd_g()
  if g.s<1 then return end
  g.a+=1
  if g.s==2 then
-  if g.k>=3 then
+  if g.k>0 then
    g.s=3
    g.t=90
    q[q.f]={a=40,c=8,g=67}
@@ -163,14 +163,25 @@ function upd_g()
  end
 end
 
-function use_g()
+function use_g(mx,my,ml)
  if g.s<1 then return false end
  if g.s==1 then
+  if ml then
+   g.m=1
+   t.x=5
+   t.y=5
+   put_p()
+   return true
+  end
   return not btnp(5)
  elseif g.s==2 then
   if btnp(0) or btnp(1) or btnp(2) or btnp(3) then
-   g.k=min(3,g.k+1)
+   g.k=1
    return false
+  elseif ml then
+   g.m=1
+   g.k=1
+   return true
   end
   return true
  elseif g.s==3 then
@@ -186,6 +197,11 @@ function use_g()
   elseif btnp(3) then
    move_t(0,1)
   elseif btnp(5) then
+   if x and t.x==x and t.y==y then
+    put_p()
+   end
+  elseif ml and point_t(mx,my) then
+   g.m=1
    if x and t.x==x and t.y==y then
     put_p()
    end

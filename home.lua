@@ -77,6 +77,7 @@ function start_h()
 end
 
 function upd_h()
+ local mx,my,ml=read_m()
  if h.p.a>0 then
   h.p.a+=1
   if h.p.a>110 then
@@ -98,14 +99,26 @@ function upd_h()
   sfx(3)
  elseif btnp(5) then
   pick_h()
+ elseif ml and mx>=40 and mx<88 then
+  if my>=56 and my<62 then
+   h.o=1
+   pick_h()
+  elseif my>=64 and my<70 then
+   h.o=2
+   pick_h()
+  elseif my>=72 and my<78 then
+   h.o=3
+   pick_h()
+  end
  end
 end
 
 function upd_hg()
+ local mx,my,ml=read_m()
  if h.a<15 then
   h.a+=1
  end
- if btnp(5) then
+ if btnp(5) or ml and mx>=28 and mx<=100 and my>=54 and my<=80 then
   h.x+=1
   if h.x>1 then
    start_h()
